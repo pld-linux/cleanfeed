@@ -6,8 +6,6 @@ Version:	0.95.7b
 Release:	12
 License:	distributable
 Group:		Networking/Daemons
-Group(de):	Netzwerkwesen/Server
-Group(pl):	Sieciowe/Serwery
 Source0:	ftp://ftp.exit109.com/users/jeremy/%{name}-%{version}.tar.gz
 Patch0:		%{name}-conf.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
