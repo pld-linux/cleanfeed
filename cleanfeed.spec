@@ -29,10 +29,10 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/{etc/news,usr/{man/man8,lib/news/bin/control}}
 
 install cleanfeed.conf $RPM_BUILD_ROOT/etc/news/
-install cleanfeed.8 $RPM_BUILD_ROOT/usr/man/man8/
+install cleanfeed.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 install cleanfeed $RPM_BUILD_ROOT/usr/lib/news/bin/control/filter_innd.pl
 
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man8/* \
+gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man8/* \
 	README
 
 %clean
@@ -43,7 +43,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc README.gz
 %attr(640,news,news) %config(noreplace) %verify(not size mtime md5) /etc/news/*
 %attr(750,news,news) /usr/lib/news/bin/control/filter_innd.pl
-/usr/man/man8/*
+%{_mandir}/man8/*
 
 %changelog
 * Wed Dec 09 1998 Wojtek ¦lusarczyk <wojtek@shadow.eu.org>
