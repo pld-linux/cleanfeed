@@ -1,3 +1,4 @@
+%include	/usr/lib/rpm/macros.perl
 Summary:	INN spam filter
 Summary(pl):	Filtr spamu dla INN
 Name:		cleanfeed
