@@ -47,7 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Dec 09 1998 Wojtek ¦lusarczyk <wojtek@shadow.eu.org>
-[0.95.7b-2]
+  [0.95.7b-2]
 - build for PLD Tornado,
 - rewrote spec file.
 
