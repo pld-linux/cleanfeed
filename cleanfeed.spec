@@ -9,7 +9,7 @@ Group(pl):	Sieciowe/Serwery
 Source:		ftp://ftp.exit109.com/users/jeremy/%{name}-%{version}.tar.gz
 Patch:		cleanfeed-conf.patch
 Buildroot:	/tmp/%{name}-%{version}-root
-Requires:	perl-MD5
+Requires:	perl-Digest-MD5
 Buildarch:	noarch
 
 %define		_sysconfdir	/etc/news
