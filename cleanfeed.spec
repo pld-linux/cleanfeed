@@ -2,7 +2,7 @@ Summary:	INN spam filter
 Summary(pl):    Filtr spamu dla INN
 Name:		cleanfeed
 Version:	0.95.7b
-Release:	2
+Release:	3
 Copyright:	distributable
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
