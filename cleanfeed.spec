@@ -44,19 +44,3 @@ rm -rf $RPM_BUILD_ROOT
 %attr(640,news,news) %config(noreplace) %verify(not size mtime md5) /etc/news/*
 %attr(750,news,news) %{_libdir}/news/bin/control/filter_innd.pl
 %{_mandir}/man8/*
-
-%changelog
-* Wed Dec 09 1998 Wojtek ¦lusarczyk <wojtek@shadow.eu.org>
-  [0.95.7b-2]
-- build for PLD Tornado,
-- rewrote spec file.
-
-* Thu Sep 03 1998 Cristian Gafton <gafton@redhat.com>
-- update to 0.95.7b
-
-* Fri May 01 1998 Cristian Gafton <gafton@redhat.com>
-- spec file cleanups
-- patch to get rod of /usr/local/bin/perl
-
-* Mon Apr 13 1998 Bryan C. Andregg <bandregg@redhat.com>
-- first package
