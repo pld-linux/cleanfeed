@@ -28,11 +28,11 @@ Automatyczny filtr spamu dla serwerów news.
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT/{%{_sysconfdir},%{_mandir}/man8,%{_libdir}/news/bin/control}
+install -d $RPM_BUILD_ROOT/{%{_sysconfdir},%{_mandir}/man8,%{_datadir}/news/filter}
 
 install cleanfeed.conf $RPM_BUILD_ROOT%{_sysconfdir}
 install cleanfeed.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install cleanfeed $RPM_BUILD_ROOT%{_libdir}/news/bin/control/filter_innd.pl
+install cleanfeed $RPM_BUILD_ROOT%{_datadir}/news/filter/filter_innd.pl
 
 gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man8/* \
 	README
@@ -44,5 +44,5 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README.gz
 %attr(640,news,news) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}*
-%attr(750,news,news) %{_libdir}/news/bin/control/filter_innd.pl
+%attr(644,news,news) %{_datadir}/news/filter/filter_innd.pl
 %{_mandir}/man8/*
