@@ -10,6 +10,7 @@ Source0:	ftp://ftp.exit109.com/users/jeremy/%{name}-%{version}.tar.gz
 Patch0:		cleanfeed-conf.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Requires:	perl-Digest-MD5
+Conflicts:	inn < 2.3
 Buildarch:	noarch
 
 %define		_sysconfdir	/etc/news
