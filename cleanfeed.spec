@@ -24,7 +24,7 @@ Automatyczny filtr spamu dla serwerów news.
 
 %prep
 %setup -q
-%patch -p1 
+%patch -p1
 
 %build
 # INN 2.3.x hack
