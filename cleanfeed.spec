@@ -26,7 +26,7 @@ Automatyczny filtr spamu dla serwerów news.
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT/{etc/news,usr/{man/man8,lib/news/bin/control}}
+install -d $RPM_BUILD_ROOT/{etc/news,%{_mandir}/man8,%{_libdir}/news/bin/control}
 
 install cleanfeed.conf $RPM_BUILD_ROOT/etc/news/
 install cleanfeed.8 $RPM_BUILD_ROOT%{_mandir}/man8/
