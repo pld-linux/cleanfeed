@@ -12,6 +12,8 @@ Buildroot:	/tmp/%{name}-%{version}-root
 Requires:	perl-MD5
 Buildarch:	noarch
 
+%define		_sysconfdir	/etc/news
+
 %description
 Cleanfeed is an automatic filter for INN that removes spam from incoming
 newsfeeds.
@@ -26,9 +28,9 @@ Automatyczny filtr spamu dla serwerów news.
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT/{etc/news,%{_mandir}/man8,%{_libdir}/news/bin/control}
+install -d $RPM_BUILD_ROOT/{%{_sysconfdir},%{_mandir}/man8,%{_libdir}/news/bin/control}
 
-install cleanfeed.conf $RPM_BUILD_ROOT/etc/news/
+install cleanfeed.conf $RPM_BUILD_ROOT%{_sysconfdir}
 install cleanfeed.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 install cleanfeed $RPM_BUILD_ROOT%{_libdir}/news/bin/control/filter_innd.pl
 
@@ -41,6 +43,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.gz
-%attr(640,news,news) %config(noreplace) %verify(not size mtime md5) /etc/news/*
+%attr(640,news,news) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}*
 %attr(750,news,news) %{_libdir}/news/bin/control/filter_innd.pl
 %{_mandir}/man8/*
