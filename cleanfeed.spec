@@ -2,12 +2,13 @@ Summary:	INN spam filter
 Summary(pl):	Filtr spamu dla INN
 Name:		cleanfeed
 Version:	0.95.7b
-Release:	4
-Copyright:	distributable
+Release:	11
+License:	Distributable
 Group:		Networking/Daemons
+Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Source0:	ftp://ftp.exit109.com/users/jeremy/%{name}-%{version}.tar.gz
-Patch0:		cleanfeed-conf.patch
+Patch0:		%{name}-conf.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Requires:	perl-Digest-MD5
 Conflicts:	inn < 2.3
@@ -26,6 +27,7 @@ Automatyczny filtr spamu dla serwerów news.
 %setup -q
 %patch -p1 
 
+%build
 # INN 2.3.x hack
 sed -e "s|\$lines = \$hdr{'__BODY__'} =~ tr/\\\n/\\\n/;|\$lines = \$hdr{'__LINES__'};|g" \
 	cleanfeed > cleanfeed.new
