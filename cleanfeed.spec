@@ -2,7 +2,7 @@ Summary:	INN spam filter
 Summary(pl):	Filtr spamu dla INN
 Name:		cleanfeed
 Version:	0.95.7b
-Release:	3
+Release:	4
 Copyright:	distributable
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
@@ -25,6 +25,10 @@ Automatyczny filtr spamu dla serwerów news.
 %setup -q
 %patch -p1 
 
+# INN 2.3.x hack
+sed -e "s|\$lines = \$hdr{'__BODY__'} =~ tr/\\\n/\\\n/;|\$lines = \$hdr{'__LINES__'};|g" \
+	cleanfeed > cleanfeed.new
+
 %install
 rm -rf $RPM_BUILD_ROOT
 
@@ -32,10 +36,9 @@ install -d $RPM_BUILD_ROOT/{%{_sysconfdir},%{_mandir}/man8,%{_datadir}/news/filt
 
 install cleanfeed.conf $RPM_BUILD_ROOT%{_sysconfdir}
 install cleanfeed.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install cleanfeed $RPM_BUILD_ROOT%{_datadir}/news/filter/filter_innd.pl
+install cleanfeed.new $RPM_BUILD_ROOT%{_datadir}/news/filter/filter_innd.pl
 
-gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man8/* \
-	README
+gzip -9nf README
 
 %clean
 rm -rf $RPM_BUILD_ROOT
