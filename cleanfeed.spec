@@ -35,7 +35,7 @@ sed -e "s|\$lines = \$hdr{'__BODY__'} =~ tr/\\\n/\\\n/;|\$lines = \$hdr{'__LINES
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT/{%{_sysconfdir},%{_mandir}/man8,%{_datadir}/news/filter}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},%{_mandir}/man8,%{_datadir}/news/filter}
 
 install cleanfeed.conf $RPM_BUILD_ROOT%{_sysconfdir}
 install cleanfeed.8 $RPM_BUILD_ROOT%{_mandir}/man8/
