@@ -43,6 +43,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.gz
-%attr(640,news,news) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/*
+%attr(640,root,news) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/*
 %{_datadir}/news/filter/filter_innd.pl
 %{_mandir}/man8/*
