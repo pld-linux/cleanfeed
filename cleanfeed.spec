@@ -7,6 +7,7 @@ Release:	12
 License:	distributable
 Group:		Networking/Daemons
 Source0:	ftp://ftp.exit109.com/users/jeremy/%{name}-%{version}.tar.gz
+# Source0-md5:	a715445b9fb13382a3d97bbbb64d638f
 Patch0:		%{name}-conf.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Requires:	perl-Digest-MD5
