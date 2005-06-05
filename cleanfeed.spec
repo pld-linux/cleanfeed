@@ -9,7 +9,7 @@ Group:		Networking/Daemons
 Source0:	ftp://ftp.exit109.com/users/jeremy/%{name}-%{version}.tar.gz
 # Source0-md5:	a715445b9fb13382a3d97bbbb64d638f
 Patch0:		%{name}-conf.patch
-BuildRequires:	perl-base
+BuildRequires:	rpm-perlprov
 Requires:	perl-Digest-MD5
 Conflicts:	inn < 2.3
 BuildArch:	noarch
