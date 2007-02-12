@@ -1,6 +1,6 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	INN spam filter
-Summary(pl.UTF-8):   Filtr spamu dla INN
+Summary(pl.UTF-8):	Filtr spamu dla INN
 Name:		cleanfeed
 Version:	0.95.7b
 Release:	13
