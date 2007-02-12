@@ -1,6 +1,6 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	INN spam filter
-Summary(pl):	Filtr spamu dla INN
+Summary(pl.UTF-8):   Filtr spamu dla INN
 Name:		cleanfeed
 Version:	0.95.7b
 Release:	13
@@ -21,8 +21,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Cleanfeed is an automatic filter for INN that removes spam from
 incoming newsfeeds.
 
-%description -l pl
-Automatyczny filtr spamu dla serwerów news.
+%description -l pl.UTF-8
+Automatyczny filtr spamu dla serwerÃ³w news.
 
 %prep
 %setup -q
