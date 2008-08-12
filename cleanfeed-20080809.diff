@@ -1,0 +1,663 @@
+--- /usr/local/news/dev/cleanfeed/branches/cleanfeed-20020501/cleanfeed	2002-05-01 16:51:53.000000000 +0100
++++ /usr/local/news/dev/cleanfeed/trunk/cleanfeed	2008-08-09 18:16:09.000000000 +0100
+@@ -1,8 +1,12 @@
+-# vim: set tabstop=4 shiftwidth=4 autoindent smartindent smarttab syntax=perl:
++# vim: set tabstop=4 shiftwidth=4 expandtab syntax=perl:
++# autoindent smartindent smarttab
+ #
+ # Copyright 1999 Jeremy Nixon <jeremy@exit109.com>
+ # Copyright 2001 Marco d'Itri <md@linux.it>
+ #
++# Modified by Steve Crook (09th Aug 2008) (svn:r114) and redistributed in
++# accordance with the terms of the license.
++#
+ # This software is distributed under the terms of the Artistic License.
+ # Please see the LICENSE file in the distribution.
+ #
+@@ -11,7 +15,7 @@
+ # Directory where cleanfeed.local and the other configuration files live.
+ # Set this to undef to not use any external file.
+ 
+-$config_dir = '/news/bin/filter';
++$config_dir = '/usr/local/news/cleanfeed/etc';
+ 
+ ##############################################################################
+ # Server configuration
+@@ -42,6 +46,8 @@
+ 
+ 	do_md5 => 1,				# do the md5 checks?
+ 	do_phl => 1,				# do the posting-host/lines EMP check?
++    do_phn => 1,                # do the posting-host/newsgroups EMP check?
++    do_phr => 1,                # do posting-host (high risk groups) check?
+ 	do_fsl => 1,				# do the from/subject/lines EMP check?
+ 	do_scoring_filter => 1,		# use the scoring filter?
+ 
+@@ -54,6 +60,12 @@
+ 	PHLRateCutoff => 20,
+ 	PHLRateCeiling => 80,
+ 	PHLRateBaseInterval => 3600,
++    PHNRateCutoff => 150,
++    PHNRateCeiling => 200,
++    PHNRateBaseInterval => 3600,
++    PHRRateCutoff => 10,
++    PHRRateCeiling => 80,
++    PHRRateBaseInterval => 3600,
+ 	FSLRateCutoff => 20,
+ 	FSLRateCeiling => 40,
+ 	FSLRateBaseInterval => 1000,
+@@ -65,10 +77,13 @@
+ 	stats_interval => 3600,		# write status file every N seconds
+ 	MIDmaxlife => 4,			# time to keep rejected message-ids, in hours
+ 	md5_skips_followups => 1,	# avoid MD5 check on articles with References?
++    phn_aggressive => 1,        # use path for phn filter when no posting host
++    phr_aggressive => 1,        # use path for phr filter when no posting host
+ 	do_mid_filter => 1,			# use the message-id CHECK filter? (INN only)
+ 	do_supersedes_filter => 1,	# do the excessive supersedes filter?
+ 	drop_useless_controls => 1,	# drop sendsys, senduuname, version control msg
+ 	drop_ihave_sendme => 1,		# drop ihave, sendme control messages
++    bad_rate_reload => 10000,   # Reload bad_* files after this many articles
+ 
+ 	low_xpost_maxgroups => 6,	# max xposts in low_xpost_groups
+ 	meow_ext_maxgroups => 2,	# max xposts from meow_groups to other groups
+@@ -104,16 +119,24 @@
+ 	debug_batch_size => 0,			# max size of batch files before rotation
+ 
+ 	### binaries allowed if groups match
+-	bin_allowed => '^\w+\.binae?r|^alt\.sex\.pictures|^fur\.artwork'.
++    bin_allowed => '^[a-z]+\.binae?r|^fur\.artwork'.
+ 		'|^alt\.anonymous\.messages$|^de\.alt\.dateien|^rec\.games\.bolo$'.
+ 		'|^comp\.security\.pgp\.test$|^sfnet\.tiedostot'.
+-		'|^fido\.|^linux\.|^unidata\.',
++        '|^fido\.|^linux\.|^unidata\.|alt\.security\.keydist',
++
++    # Groups matching this regex will accept binary UUenc and yEnc files
++    # where filename extensions match 'image_extensions'.
++    image_allowed => '\.pictures',
++
++    # Extensions on image files that are allowed in 'image_allowed' groups.
++    # These are not case sensitive
++    image_extensions => 'jpe?g|png|gif',
+ 
+ 	### no binaries allowed even if bin_allowed matches
+ 	bad_bin => '\.d$|^alt\.chello',
+ 
+ 	### md5 EMP check not done if groups match
+-	md5exclude => '\.test(?:$|\.)|^es\.pruebas$',
++    md5exclude => '^perl\.cpan\.testers|^es\.pruebas$',
+ 
+ 	### reject all articles crossposted to groups matching this
+ 	poison_groups => '^alt\.(?:binaires|bainaries)|sexzilla|^newsmon$'.
+@@ -122,11 +145,17 @@
+ 					: '|^alt\.hipcrime|^us\.hipcrime|^hipcrime|h\dpcr\dme'),
+ 
+ 	### no checks done if groups match
+-	allexclude => '^clari\.|^biz\.clarinet\.',
++    allexclude => '^mailing\.',
+ 
+ 	### HTML allowed here (if block_html or block_multi_alt is turned on)
+ 	html_allowed => '^microsoft\.',
+ 
++    ### MIME HTML allowed here (if block_mime_html is turned on)
++    mime_html_allowed => '',
++
++    test_groups => '\.test(ing)?(?:$|\.)|^es\.pruebas|^borland\.public\.test2'.
++        '|^cern\.testnews',
++
+ 	### groups where we restrict crossposts even more than normal
+ 	low_xpost_groups => 'test|jobs|forsale',
+ 
+@@ -143,9 +172,31 @@
+ # FIXME currently disabled
+ #	baddomainpat => '[\w\-]+xxx|xxx[\w\-]+',
+ 
++    ### exclude these newsgroups from the fsl filter
++    fsl_exclude => 'comp\.lang\.ruby',
++
++    ### exclude these newsgroups from the phl filter
++    phl_exclude => 'comp\.lang\.ruby|^microsoft\.|^alt\.bestjobsusa'.
++        '|\.bbs\.',
++
+ 	### exempt these hosts from the NNTP-Posting-Host filter
+ 	phl_exempt => '^localhost$|webtv\.net$|^newscene\.newscene\.com$'.
+-		'|^freebsd\.csie\.nctu\.edu\.tw$|^ddt\.demos\.su$|^onlyNews customer$',
++        '|^freebsd\.csie\.nctu\.edu\.tw$|^ddt\.demos\.su$|^onlyNews customer$'.
++        '|localhost\.pld-linux\.org',
++
++    ### exclude these newsgroups from the phn filter
++    phn_exclude => '^local\.|^alt\.anonymous\.messages|^alt\.sex\.'.
++        '|^\w+\.bin|^microsoft\.|\.bbs\.|^alt\.bestjobsusa|^mozilla\.'.
++        '|^gnus?\.|^alt\.pictures\.|^gmane\.|^fa\.|^stu\.|^corel\.|\.cvs\.'.
++        '|\.talk|^lists\.|^microsoft\.|^news\.lists\.filters',
++    
++    ### exempt these hosts from the phn filter
++    phn_exempt => '^localhost$|^127\.0\.0\.1$|localhost\.pld-linux\.org',
++
++    phr_exempt => '^localhost$|^127\.0\.0\.1$',
++
++    ### newsgroups that get frequently flooded
++    flood_groups => '',
+ 
+ 	### posting hosts exempt from excessive supersedes filter
+ 	supersedes_exempt => '^localhost$|^penguin-lust\.mit\.edu$',
+@@ -221,10 +272,13 @@
+ 		# config_append adds to the config regexps
+ 		if (%config_append) {
+ 			foreach (qw(bin_allowed bad_bin md5exclude poison_groups
+-					allexclude html_allowed low_xpost_groups no_cancel_groups
+-					baddomainpat phl_exempt supersedes_exempt
++                    allexclude html_allowed mime_html_allowed low_xpost_groups
++                    test_groups no_cancel_groups baddomainpat fsl_exclude
++                    phl_exempt phl_exclude supersedes_exempt
++                    phn_exempt phr_exempt phn_exclude flood_groups
+ 					refuse_messageids net_abuse_groups spam_report_groups
+-					adult_groups not_adult_groups faq_groups badguys)) {
++                    adult_groups not_adult_groups faq_groups badguys
++                    image_allowed image_extensions)) {
+ 				if (defined $config_append{$_}) {
+ 					$config{$_} .= "|$config_append{$_}";
+ 					$config{$_} =~ s/\|\|/\|/g;
+@@ -301,8 +355,8 @@
+ $servPre = "(?:$free|cheap|unlimited|nationwide|$site_desc)";
+ $servPost = '(?:$free|minute|samples|800|900|no.?charge)';
+ $servStr = "(?:phone.{0,15}(?:$sex|fun)|(?:adult|r.?a.?p.?e|$sex).{0,10}(?:chat|site)".
+-	"|(?:$sex).{0,15}(?:show|call|connection|vid(?:eo|s))".
+-	'|hard.?core.(?:vid(?:eo|s)|amateur)|900.dateline|(?:mass|bulk).e?-?mail)';
++    "|(?:$sex).{0,15}(?:show|call|connection|vid(?:eo|s)|dvd)".
++    '|hard.?core.(?:vid(?:eo|s)|dvd|amateur)|900.dateline|(?:mass|bulk).e?-?mail)';
+ $services = "(?:$servPre.{0,30}?$servStr)|(?:$servStr.{0,30}?$servPost)";
+ 
+ $free_stuff = "$free.{0,20}(?:password|membership|$pics|chat)".
+@@ -311,12 +365,12 @@
+ 
+ $sex_adjs = "$desc1|$sex|erotic|gay|amateur|lesbian|blow.?job|fetish".
+ 	'|pre.?teen|nude|celeb|school.?girl|bondage|rape|torture';
+-$porn = "(?:$sex_adjs).{0,25}(?:$pics|video|image|porn|photo|mpeg)";
++$porn = "(?:$sex_adjs).{0,25}(?:$pics|video|dvd|image|porn|photo|mpeg)";
+ 
+ $one_point_words = "teen|hot|sex|$free|credit|amateur|lolita|horne?y".
+-	'|dildo|anal(?!yst)|oral|school.?girl|bondage|breast|vid(?:eo|s)|orgy|erotic|porn'.
+-	'|fetish|whore|nympho|sucking|password|membership|make.money|fast.cash'.
+-	'|barely.?(?:18|legal)|orgasm';
++    '|dildo|anal(?!yst)|oral|school.?girl|bondage|breast|vid(?:eo|s)|dvd'.
++    '|orgy|erotic|porn|fetish|whore|nympho|sucking|password|membership'.
++    '|make.money|fast.cash|barely.?(?:18|legal)|orgasm';
+ $two_point_words = 'fuck|sluts|puss(?:y|ies)|\bcum|(?:hidden|live|free|dorm|spy).?cam'.
+ 	'|le[sz]b(?:ian|o)|tit(?!an|ch)|dick(?!.?berg)|blow.?job|cock|clit'.
+ 	'|pam(?:ela)?.anderson|twat|cunt|hard-?core|[^x]xxx|facial|gangbang'.
+@@ -380,10 +434,8 @@
+ 		}
+ 	}
+ 
+-	read_hash('bad_paths', \%Bad_Path);
+-	read_hash('bad_cancel_paths', \%Bad_Cancel_Path);
+-	read_hash('bad_adult_paths', \%Bad_Adult_Path);
+-	read_hash('bad_hosts', \%Bad_Hosts);
++    # Read all the bad_* files
++    read_hashes();
+ 
+ 	# initialise the rate filters
+ 	if ($config{do_md5}) {
+@@ -400,6 +452,20 @@
+ 	} else {
+ 		undef $PHLhistory;
+ 	}
++    if ($config{do_phn}) {
++        $PHNhistory = new Cleanfeed::RateLimit;
++        $PHNhistory->init($config{PHNRateCutoff}, $config{PHNRateCeiling},
++            $config{PHNRateBaseInterval});
++    } else {
++        undef $PHNhistory;
++    }
++    if ($config{do_phr}) {
++        $PHRhistory = new Cleanfeed::RateLimit;
++        $PHRhistory->init($config{PHRRateCutoff}, $config{PHRRateCeiling},
++            $config{PHRRateBaseInterval});
++    } else {
++        undef $PHRhistory;
++    }
+ 	if ($config{do_fsl}) {
+ 		$FSLhistory = new Cleanfeed::RateLimit;
+ 		$FSLhistory->init($config{FSLRateCutoff}, $config{FSLRateCeiling},
+@@ -427,6 +493,15 @@
+ 	$status{articles}++;
+ 	$timer{articles}++ if $config{timer_info};
+ 
++    # Reload the bad_* files every $bad_rate_reload articles accepted
++    if ($status{accepted} % $config{bad_rate_reload} == 0
++        and $status{accepted} > $status{bad_reloaded}) {
++        slog('N', "Reloading bad files after $status{accepted} articles");
++        read_hashes();
++        # Prevent looping whilst waiting for another accepted article
++        $status{bad_reloaded} = $status{accepted};
++    }
++
+ 	# break out newsgroups into an array
+ 	@groups = split(/[,\s]+/, $hdr{Newsgroups});
+ 	if ($hdr{'Followup-To'}) {
+@@ -445,10 +520,16 @@
+ 			$gr{'rg_'.$item}++ if /$Restricted_Groups{$item}/;
+ 		}
+ 		$gr{skip}++ if $config{allexclude} and /$config{allexclude}/o;
++        $gr{fslskip}++ if $config{fslexclude} and /$config{fslexclude}/o;
+ 		$gr{md5skip}++ if $config{md5exclude} and /$config{md5exclude}/o;
++        $gr{phnskip}++ if $config{phn_exclude} and /$config{phn_exclude}/o;
++        $gr{phlskip}++ if $config{phl_exclude} and /$config{phl_exclude}/o;
++        $gr{phrinc}++ if $config{flood_groups} and /$config{flood_groups}/o;
+ 		$gr{binary}++ if $config{bin_allowed} and /$config{bin_allowed}/o;
++        $gr{image}++ if $config{image_allowed} and /$config{image_allowed}/o;
+ 		$gr{bad_bin}++ if $config{bad_bin} and /$config{bad_bin}/o;
+ 		$gr{html}++ if $config{html_allowed} and /$config{html_allowed}/o;
++        $gr{mime_html}++ if $config{mime_html_allowed} and /$config{mime_html_allowed}/o;
+ 		$gr{poison}++ if $config{poison_groups}
+ 			and /$config{poison_groups}/o;
+ 		$gr{reports}++ if $config{spam_report_groups}
+@@ -459,7 +540,7 @@
+ 			and /$config{meow_groups}/o;
+ 		$gr{no_cancel}++ if $config{no_cancel_groups}
+ 			and /$config{no_cancel_groups}/o;
+-		$gr{test}++ if /\.test\b/;
++        $gr{test}++ if /$config{test_groups}/o;
+ 		$gr{adult}++ if /$config{adult_groups}/o
+ 			and not /$config{not_adult_groups}/o;
+ 		$gr{faq}++ if /$config{faq_groups}/o;
+@@ -468,15 +549,24 @@
+ 		} elsif (defined &INN::newsgroup) {
+ 			$gr{mod}++ if INN::newsgroup($_) eq 'm';
+ 		}
++        
++        # Reject bad groups
++        return reject("Bad group ($_)", 'Bad group') if exists $Bad_Groups{$_};
+ 	}
+ 
+ 	# these only count if all groups match
+ 	$gr{skip} = ($gr{skip} == scalar @groups);
+ 	$gr{md5skip} = ($gr{md5skip} == scalar @groups);
++    $gr{phnskip} = ($gr{phnskip} == scalar @groups);
++    $gr{phlskip} = ($gr{phlskip} == scalar @groups);
++    $gr{image} = (($gr{image} + $gr{binary}) >= scalar @groups);
+ 	$gr{binary} = ($gr{binary} == scalar @groups);
++    $gr{reports} = ($gr{reports} == scalar @groups);
+ 	$gr{binary} = 0 if $gr{bad_bin};
+ 	$gr{html} = ($gr{html} == scalar @groups);
++    $gr{mime_html} = ($gr{mime_html} == scalar @groups);
+ 	$gr{allmod} = ($gr{mod} == scalar @groups);
++    $gr{alltest} = ($gr{test} == scalar @groups);
+ 
+ 	# If all newsgroups are excluded from filtering, bail now
+ 	return '' if $gr{skip};
+@@ -488,7 +578,7 @@
+ 	# checks common to all article types #####################################
+ 	foreach (split(/\s+/, $hdr{'NNTP-Posting-Host'})) {
+ 		return reject("Bad host ($hdr{'NNTP-Posting-Host'})", 'Bad site')
+-			if exists $Bad_Hosts{$_};
++            if exists $Bad_Hosts{$_} or exists $Bad_Hosts_Central{$_};
+ 	}
+ 
+ 	@Path_Entries = split(/!/, $hdr{Path});
+@@ -629,17 +719,29 @@
+ 				/mx;
+ 
+ 		# binaries in non-binary newsgroups
+-		if ($config{block_binaries}) {
++        if ($config{block_binaries}
++            and $lines > $config{max_encoded_lines}) {
+ 			unless ($config{binaries_in_mod_groups} and $gr{allmod}) {
+-				return reject('Binary in non-binary group')
+-					if $lines > $config{max_encoded_lines}
+-						and not $gr{binary} and is_binary();
+-			}
+-		}
++                # We're only interested in binaries
++                if (is_binary()) {
++                    # Is the binary an image?
++                    if (is_image()) {
++                        return reject("Binary image in non-image group")
++                        if not $gr{image};
++                        # gr{image} is true when distro matches bin_allowed
++                        # or image_allowed
++                    } else {
++                        return reject("Binary in non-binary group")
++                        if not $gr{binary};
++                        # gr{binary} is true when distro matches bin_allowed
++                    }; # End of is_image
++                }; # End of is_binary
++            }; # End of moderated groups
++        }; # End of max encoded lines
+ 
+ 		# mime-encapsulated HTML (attached *.html file)
+ 		return reject('Attached HTML file')
+-			if $config{block_mime_html}
++            if $config{block_mime_html} and not $gr{mime_html}
+ 				and $hdr{'Content-Disposition'} =~ /filename.*\.html?/
+ 				or $hdr{'Content-Base'} =~ /file:.*\.html?/
+ 				or ($lch{'content-type'} =~ m#multipart/(?:mixed|related)#
+@@ -722,7 +824,7 @@
+ 
+ 		# EMP checks #########################################################
+ 		# create MD5 body checksum hash.
+-		if ($config{do_md5} and not $gr{md5skip}
++        if ($config{do_md5} and not $gr{md5skip} and not $gr{alltest}
+ 				and not ($hdr{References} and $config{md5_skips_followups})
+ 				and (($config{md5_max_length}
+ 						and $lines < $config{md5_max_length})
+@@ -749,8 +851,8 @@
+ 		if (not $gr{reports}) {
+ 			# create posting-host/lines hash
+ 			if ($config{do_phl} and not $gr{allmod}
+-				and $hdr{'NNTP-Posting-Host'}
+-				and not $hdr{Newsgroups} =~ /^(?:tw\.bbs\.|fido7\.)/ #XXX FIXME
++                and $hdr{'NNTP-Posting-Host'} and not $gr{phlskip}
++                and not is_binary() and not $gr{alltest}
+ 				and not $hdr{'NNTP-Posting-Host'} =~ /(?:$config{phl_exempt})/o
+ 				and not ($gr{binary} and $lines > 100
+ 						and $hdr{Subject} =~ /[\(\[]\d+\/\d+[\)\]]/)) {
+@@ -758,8 +860,31 @@
+ 						if $PHLhistory->add("$hdr{'NNTP-Posting-Host'} $lines");
+ 			}
+ 
++            # create posting-host/newsgroups hash
++            if ($config{do_phn} and not $gr{allmod}
++                and not $gr{phrinc} and not $gr{phnskip} and not $gr{alltest}
++                and not ($gr{binary} and $lines > 100)) {
++                    if ($hdr{'NNTP-Posting-Host'}) {
++                        if (not $hdr{'NNTP-Posting-Host'} =~ /(?:$config{phn_exempt})/o) {
++                            return reject('EMP (phn nph)', 'EMP')
++                                if $PHNhistory->add("$hdr{'NNTP-Posting-Host'} $hdr{Newsgroups}");
++                        }
++                    }
++                    elsif ($config{phn_aggressive}) {
++                        my $server;
++                        $server = lc "$hdr{Path}";
++                        $server =~ s/(![^\.]+)+$//;
++                        my $exc_count = ($server =~ tr/!//);
++                        if ($exc_count > 1) {
++                            $server =~ s/.*!//;
++                            return reject('EMP (phn path)', 'EMP')
++                                if $PHNhistory->add("$server $hdr{Newsgroups}");
++                        }
++                    }
++            }
++
+ 			# create from/subject/lines hash
+-			if ($config{do_fsl}) {
++            if ($config{do_fsl} and not $gr{fslskip} and not $gr{alltest}) {
+ 				my $hash1;
+ 				if (defined $hdr{Sender}) {
+ 					$hash1 = lc "$hdr{Sender} $hdr{Subject}";
+@@ -773,6 +898,28 @@
+ 			}
+ 		} # not reports groups
+ 
++        # create high-risk newsgroups hash
++        if ($config{do_phr} and $gr{phrinc}
++            and not ($gr{binary} and $lines > 100)) {
++            if ($hdr{'NNTP-Posting-Host'}) {
++                if (not $hdr{'NNTP-Posting-Host'} =~ /(?:$config{phr_exempt})/o) {
++                    return reject('EMP (phr nph)', 'EMP')
++                        if $PHRhistory->add("$hdr{'NNTP-Posting-Host'}");
++                }
++            }
++            elsif ($config{phr_aggressive}) {
++                my $server;
++                $server = lc "$hdr{Path}";
++                $server =~ s/(![^\.]+)+$//;
++                my $exc_count = ($server =~ tr/!//);
++                if ($exc_count > 1) {
++                    $server =~ s/.*!//;
++                    return reject('EMP (phr path)', 'EMP')
++                        if $PHRhistory->add("$server");
++                }
++            }
++        }
++
+ 		# Supersedes checks ##################################################
+ 		if ($hdr{Supersedes}) {
+ 			foreach (@Path_Entries) {
+@@ -847,8 +994,15 @@
+ 				and $hdr{'NNTP-Posting-Host'} !~ /webtv\.net$/
+ 				and $lch{'message-id'} !~ /webtv\.net>$/;
+ 
+-			$score += 1 if scalar @followups > 4;
+-			$score += 2 if scalar @followups > 8;
++            $score += 1 if scalar @followups > 2;
++            $score += 2 if scalar @followups > 4;
++            $score += 1 if scalar @followups ge scalar @groups;
++
++            # Add 1 to score for each followup not in groups
++            my %grps;
++            @grps{@groups} = (); # Convert array to hash (for exists)
++            for (@followups) { $score++ unless exists $grps{$_} };
++            undef %grps;
+ 
+ 			$score += 4 if $lch{from} =~ /$url2/o;
+ 
+@@ -943,12 +1097,12 @@
+ 				if exists $Bad_Cancel_Path{$_};
+ 		}
+ 
+-		reject('User-issued spam cancel')
++        return reject('User-issued spam cancel')
+ 			if $config{block_user_spamcancels}
+ 				and $hdr{'X-Trace'} and $hdr{'NNTP-Posting-Host'}
+ 				and $hdr{Path} =~ /!cyberspam!/;
+ 
+-		reject('User-issued cancel')
++        return reject('User-issued cancel')
+ 			if $config{block_user_cancels}
+ 				and not $hdr{Path} =~ /!cyberspam!/;
+ 
+@@ -1047,8 +1201,12 @@
+ 				)
+ 				\s*\r?\n				# trailing spaces and end of line
+ 			){$config{max_encoded_lines}} # at least this many lines
+-		/mox or
+-		$hdr{__BODY__} =~ /
++        /mox) {
++        $Cache_Is_Binary = 'uuencoded';
++        return $Cache_Is_Binary;
++    }
++
++    if ($hdr{__BODY__} =~ /
+ 			(?:
+ 				^[ \t|>]*
+ 				(?>
+@@ -1057,23 +1215,44 @@
+ 				\s*\r?\n
+ 			){$config{max_encoded_lines}}
+ 		/mox) {
+-		$Cache_Is_Binary = 1;
+-		return 1;
++        $Cache_Is_Binary = 'Base64';
++        return $Cache_Is_Binary;
+ 	}
+ 
+-	if ($hdr{__BODY__} =~ /^=ybegin (.+)$/m) {
++    if ($hdr{__BODY__} =~ /(?:^|\n)=ybegin (.+)$/m) {
+ 		local $_ = $1;
+ 		if (/line=/ and /size=/ and /name=/) {
+-			$Cache_Is_Binary = 1;
+-			return 1;
++            $Cache_Is_Binary = 'yEnc Encoded';
++            return $Cache_Is_Binary;
+ 		}
+ 	}
+ 			
+-
+ 	$Cache_Is_Binary = 0;
+ 	return 0;
+ }
+ 
++# Useful for groups where pictures are accepted, but not other binary formats.
++sub is_image {
++    return 0 unless is_binary();
++    if ($hdr{__BODY__} =~ /
++        (                               # Start of uuEnc section
++        begin[ \t]+                     # begin
++        [0-7]{3,4}[ \t]+                # 666
++        |                               # Start of yEnc section
++        \=ybegin                        # ybegin
++        .+name\=                        # yEnc headers
++        )
++        .+                              # filename (greedy is good)
++        \.($config{image_extensions})   # image extension
++        \s*$                            # end of line
++        /imox) {
++            $Cache_Is_Binary .= ' image';
++            return 1;
++    };
++    return 0;
++};
++
++
+ # Attempt to determine the client software
+ sub x_reader {
+ 	return	lc $hdr{'X-Newsreader'}	||
+@@ -1150,13 +1329,16 @@
+ sub filter_stats {
+ 	my $md5hashentries = $MD5history ? $MD5history->count : 0;
+ 	my $phlhashentries = $PHLhistory ? $PHLhistory->count : 0;
++    my $phnhashentries = $PHNhistory ? $PHNhistory->count : 0;
++    my $phrhashentries = $PHRhistory ? $PHRhistory->count : 0;
+ 	my $fslhashentries = $FSLhistory ? $FSLhistory->count : 0;
+ 	my $superentries   = $Suphistory ? $Suphistory->count : 0;
+ 	my $midhistentries = $MIDhistory->count;
+   
+ 	my $string = "Pass: $status{accepted}  Reject: $status{rejected}";
+ 	$string .= "  Refuse: $status{refused}" if $config{do_mid_filter};
+-	$string .= "  MD5: $md5hashentries  PHL: $phlhashentries  FSL: $fslhashentries";
++    $string .= "  MD5: $md5hashentries  PHL: $phlhashentries  PHN: $phnhashentries";
++    $string .= "  PHR: $phrhashentries  FSL: $fslhashentries";
+ 	$string .= "  Arts/sec: $timer{rate}  Accept/sec: $timer{accept_rate}"
+ 		if $config{timer_info} and $timer{rate};
+ 	$string .= "  cleanfeed.conf NOT loaded!" if $Local_Conf_Err;
+@@ -1199,16 +1381,22 @@
+ 
+ 	my $md5hashentries = $MD5history ? $MD5history->count : 0;
+ 	my $phlhashentries = $PHLhistory ? $PHLhistory->count : 0;
++    my $phnhashentries = $PHNhistory ? $PHNhistory->count : 0;
++    my $phrhashentries = $PHRhistory ? $PHRhistory->count : 0;
+ 	my $fslhashentries = $FSLhistory ? $FSLhistory->count : 0;
+ 	my $superentries   = $Suphistory ? $Suphistory->count : 0;
+ 	my $midhistentries = $MIDhistory->count;
+ 	my $md5count = $MD5history ? $MD5history->overflowed : 0;
+ 	my $phlcount = $PHLhistory ? $PHLhistory->overflowed : 0;
++    my $phncount = $PHNhistory ? $PHNhistory->overflowed : 0;
++    my $phrcount = $PHRhistory ? $PHRhistory->overflowed : 0;
+ 	my $fslcount = $FSLhistory ? $FSLhistory->overflowed : 0;
+ 
+ 	print HTML "\n<p>\n"
+ 	. "<b>MD5 entries:</b> $md5hashentries <b>Rejecting:</b> $md5count<br>\n"
+ 	. "<b>PHL entries:</b> $phlhashentries <b>Rejecting:</b> $phlcount<br>\n"
++    . "<b>PHN entries:</b> $phnhashentries <b>Rejecting:</b> $phncount<br>\n"
++    . "<b>PHR entries:</b> $phrhashentries <b>Rejecting:</b> $phrcount<br>\n"
+ 	. "<b>FSL entries:</b> $fslhashentries <b>Rejecting:</b> $fslcount<br>\n"
+ 	. "<b>MID history:</b> $midhistentries\n";
+ 
+@@ -1243,6 +1431,8 @@
+ 
+ 	my $md5hashentries = $MD5history ? $MD5history->count : 0;
+ 	my $phlhashentries = $PHLhistory ? $PHLhistory->count : 0;
++    my $phnhashentries = $PHNhistory ? $PHNhistory->count : 0;
++    my $phrhashentries = $PHRhistory ? $PHRhistory->count : 0;
+ 	my $fslhashentries = $FSLhistory ? $FSLhistory->count : 0;
+ 	my $superentries   = $Suphistory ? $Suphistory->count : 0;
+ 	my $midhistentries = $MIDhistory->count;
+@@ -1274,6 +1464,8 @@
+ 	print FILE "Refused: $status{refused}\n" if $config{do_mid_filter};
+ 	print FILE "MD5 entries: $md5hashentries\n"
+ 	. "PHL entries: $phlhashentries\n"
++    . "PHN entries: $phnhashentries\n"
++    . "PHR entries: $phrhashentries\n"
+ 	. "FSL entries: $fslhashentries\n"
+ 	. "MID history: $midhistentries\n\n";
+ 	if ($config{timer_info} and $timer{rate}) {
+@@ -1327,6 +1519,8 @@
+ sub trimhashes {
+ 	$MD5history->trim if $MD5history;
+ 	$PHLhistory->trim if $PHLhistory;
++    $PHNhistory->trim if $PHNhistory;
++    $PHRhistory->trim if $PHRhistory;
+ 	$FSLhistory->trim if $FSLhistory;
+ 	$Suphistory->trim if $Suphistory;
+ 	$MIDhistory->trim;
+@@ -1348,6 +1542,13 @@
+ ##############################################################################
+ 
+ sub saveart {
++#TODO: Messy!  I need to tidy up the mess I've made of this sub.
++    # We currently recognise various formatting options:
++    # 0: Header and body truncated if over 50 lines (Default)
++    # 1: Header and full body regardless of length
++    # 2: Header only
++    # 3: Just NNTP-Posting-Host (If it exists in the message)
++
+ 	my ($file, $info, $format) = @_;
+ 	$format ||= 0;
+ 
+@@ -1358,17 +1559,29 @@
+ 		slog('E', "Cannot open $file: $!");
+ 		return;
+ 	}
++    if ($format == 3 and $hdr{'NNTP-Posting-Host'}) {
++        print LOCAL "$hdr{'NNTP-Posting-Host'}\n"
++    }
++    if ($format != 3) {
+ 	print LOCAL "From foo\@bar Thu Jan  1 00:00:01 1970\n";
+ 	print LOCAL "INFO: $info\n" if $info;
++        print LOCAL "Binary: $Cache_Is_Binary\n"
++            if is_binary();
+ 	foreach (sort keys %hdr) {
+ 		next if $_ eq '__BODY__' or $_ eq '__LINES__';
+ 		print LOCAL "$_: $hdr{$_}\n"
+ 	}
++    }
+ 	if ($format == 2) {
+ 		print LOCAL "\n";
+-	} elsif ($format != 1 and $lines > 250) {
+-		print LOCAL "\n" . substr($hdr{__BODY__}, 0, 15000) . "\n\n";
+-	} else {
++    }
++    if ($lines > 50 and $format == 0) {
++        print LOCAL "\n" . substr($hdr{__BODY__}, 0, 3000) . "\n\n";
++    }
++    if ($lines > 50 and $format == 1) {
++        print LOCAL "\n$hdr{__BODY__}\n";
++    }
++    if ($lines <= 50 and ($format == 0 or $format == 1)) {
+ 		print LOCAL "\n$hdr{__BODY__}\n";
+ 	}
+ 	close LOCAL;
+@@ -1399,6 +1612,8 @@
+ 
+ 	$MD5history->dump('MD5history', \*DUMP) if $MD5history;
+ 	$PHLhistory->dump('PHLhistory', \*DUMP) if $PHLhistory;
++    $PHNhistory->dump('PHNhistory', \*DUMP) if $PHNhistory;
++    $PHRhistory->dump('PHRhistory', \*DUMP) if $PHRhistory;
+ 	$FSLhistory->dump('FSLhistory', \*DUMP) if $FSLhistory;
+ 
+ 	close DUMP;
+@@ -1414,6 +1629,8 @@
+ 	# delete the data of checks which have been disabled since the last dump
+ 	undef $MD5history if not $config{do_md5};
+ 	undef $PHLhistory if not $config{do_phl};
++    undef $PHNhistory if not $config{do_phn};
++    undef $PHRhistory if not $config{do_phr};
+ 	undef $FSLhistory if not $config{do_fsl};
+ 
+ 	# We can't syslog at startup because INN doesn't provide the callbacks
+@@ -1429,6 +1646,15 @@
+ ##############################################################################
+ # parse the data files
+ ##############################################################################
++sub read_hashes {
++    read_hash('bad_paths', \%Bad_Path);
++    read_hash('bad_cancel_paths', \%Bad_Cancel_Path);
++    read_hash('bad_adult_paths', \%Bad_Adult_Path);
++    read_hash('bad_hosts', \%Bad_Hosts);
++    read_hash('bad_hosts_central', \%Bad_Hosts_Central);
++    read_hash('bad_groups', \%Bad_Groups);
++}
++
+ sub read_hash {
+ 	my ($file, $hash) = @_;
+ 
