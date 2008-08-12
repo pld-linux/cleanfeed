@@ -1,0 +1,1383 @@
+.rn '' }`
+''' $RCSfile$$Revision$$Date$
+'''
+''' $Log$
+'''
+.de Sh
+.br
+.if t .Sp
+.ne 5
+.PP
+\fB\\$1\fR
+.PP
+..
+.de Sp
+.if t .sp .5v
+.if n .sp
+..
+.de Ip
+.br
+.ie \\n(.$>=3 .ne \\$3
+.el .ne 3
+.IP "\\$1" \\$2
+..
+.de Vb
+.ft CW
+.nf
+.ne \\$1
+..
+.de Ve
+.ft R
+
+.fi
+..
+'''
+'''
+'''     Set up \*(-- to give an unbreakable dash;
+'''     string Tr holds user defined translation string.
+'''     Bell System Logo is used as a dummy character.
+'''
+.tr \(*W-|\(bv\*(Tr
+.ie n \{\
+.ds -- \(*W-
+.ds PI pi
+.if (\n(.H=4u)&(1m=24u) .ds -- \(*W\h'-12u'\(*W\h'-12u'-\" diablo 10 pitch
+.if (\n(.H=4u)&(1m=20u) .ds -- \(*W\h'-12u'\(*W\h'-8u'-\" diablo 12 pitch
+.ds L" ""
+.ds R" ""
+'''   \*(M", \*(S", \*(N" and \*(T" are the equivalent of
+'''   \*(L" and \*(R", except that they are used on ".xx" lines,
+'''   such as .IP and .SH, which do another additional levels of
+'''   double-quote interpretation
+.ds M" """
+.ds S" """
+.ds N" """""
+.ds T" """""
+.ds L' '
+.ds R' '
+.ds M' '
+.ds S' '
+.ds N' '
+.ds T' '
+'br\}
+.el\{\
+.ds -- \(em\|
+.tr \*(Tr
+.ds L" ``
+.ds R" ''
+.ds M" ``
+.ds S" ''
+.ds N" ``
+.ds T" ''
+.ds L' `
+.ds R' '
+.ds M' `
+.ds S' '
+.ds N' `
+.ds T' '
+.ds PI \(*p
+'br\}
+.\"	If the F register is turned on, we'll generate
+.\"	index entries out stderr for the following things:
+.\"		TH	Title 
+.\"		SH	Header
+.\"		Sh	Subsection 
+.\"		Ip	Item
+.\"		X<>	Xref  (embedded
+.\"	Of course, you have to process the output yourself
+.\"	in some meaninful fashion.
+.if \nF \{
+.de IX
+.tm Index:\\$1\t\\n%\t"\\$2"
+..
+.nr % 0
+.rr F
+.\}
+.TH cleanfeed 8 "Version 0.95.7b" "26/Aug/98" "Cleanfeed - Because spam sucks"
+.UC
+.if n .hy 0
+.if n .na
+.ds C+ C\v'-.1v'\h'-1p'\s-2+\h'-1p'+\s0\v'.1v'\h'-1p'
+.de CQ          \" put $1 in typewriter font
+.ft CW
+'if n "\c
+'if t \\&\\$1\c
+'if n \\&\\$1\c
+'if n \&"
+\\&\\$2 \\$3 \\$4 \\$5 \\$6 \\$7
+'.ft R
+..
+.\" @(#)ms.acc 1.5 88/02/08 SMI; from UCB 4.2
+.	\" AM - accent mark definitions
+.bd B 3
+.	\" fudge factors for nroff and troff
+.if n \{\
+.	ds #H 0
+.	ds #V .8m
+.	ds #F .3m
+.	ds #[ \f1
+.	ds #] \fP
+.\}
+.if t \{\
+.	ds #H ((1u-(\\\\n(.fu%2u))*.13m)
+.	ds #V .6m
+.	ds #F 0
+.	ds #[ \&
+.	ds #] \&
+.\}
+.	\" simple accents for nroff and troff
+.if n \{\
+.	ds ' \&
+.	ds ` \&
+.	ds ^ \&
+.	ds , \&
+.	ds ~ ~
+.	ds ? ?
+.	ds ! !
+.	ds /
+.	ds q
+.\}
+.if t \{\
+.	ds ' \\k:\h'-(\\n(.wu*8/10-\*(#H)'\'\h"|\\n:u"
+.	ds ` \\k:\h'-(\\n(.wu*8/10-\*(#H)'\`\h'|\\n:u'
+.	ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'^\h'|\\n:u'
+.	ds , \\k:\h'-(\\n(.wu*8/10)',\h'|\\n:u'
+.	ds ~ \\k:\h'-(\\n(.wu-\*(#H-.1m)'~\h'|\\n:u'
+.	ds ? \s-2c\h'-\w'c'u*7/10'\u\h'\*(#H'\zi\d\s+2\h'\w'c'u*8/10'
+.	ds ! \s-2\(or\s+2\h'-\w'\(or'u'\v'-.8m'.\v'.8m'
+.	ds / \\k:\h'-(\\n(.wu*8/10-\*(#H)'\z\(sl\h'|\\n:u'
+.	ds q o\h'-\w'o'u*8/10'\s-4\v'.4m'\z\(*i\v'-.4m'\s+4\h'\w'o'u*8/10'
+.\}
+.	\" troff and (daisy-wheel) nroff accents
+.ds : \\k:\h'-(\\n(.wu*8/10-\*(#H+.1m+\*(#F)'\v'-\*(#V'\z.\h'.2m+\*(#F'.\h'|\\n:u'\v'\*(#V'
+.ds 8 \h'\*(#H'\(*b\h'-\*(#H'
+.ds v \\k:\h'-(\\n(.wu*9/10-\*(#H)'\v'-\*(#V'\*(#[\s-4v\s0\v'\*(#V'\h'|\\n:u'\*(#]
+.ds _ \\k:\h'-(\\n(.wu*9/10-\*(#H+(\*(#F*2/3))'\v'-.4m'\z\(hy\v'.4m'\h'|\\n:u'
+.ds . \\k:\h'-(\\n(.wu*8/10)'\v'\*(#V*4/10'\z.\v'-\*(#V*4/10'\h'|\\n:u'
+.ds 3 \*(#[\v'.2m'\s-2\&3\s0\v'-.2m'\*(#]
+.ds o \\k:\h'-(\\n(.wu+\w'\(de'u-\*(#H)/2u'\v'-.3n'\*(#[\z\(de\v'.3n'\h'|\\n:u'\*(#]
+.ds d- \h'\*(#H'\(pd\h'-\w'~'u'\v'-.25m'\f2\(hy\fP\v'.25m'\h'-\*(#H'
+.ds D- D\\k:\h'-\w'D'u'\v'-.11m'\z\(hy\v'.11m'\h'|\\n:u'
+.ds th \*(#[\v'.3m'\s+1I\s-1\v'-.3m'\h'-(\w'I'u*2/3)'\s-1o\s+1\*(#]
+.ds Th \*(#[\s+2I\s-2\h'-\w'I'u*3/5'\v'-.3m'o\v'.3m'\*(#]
+.ds ae a\h'-(\w'a'u*4/10)'e
+.ds Ae A\h'-(\w'A'u*4/10)'E
+.ds oe o\h'-(\w'o'u*4/10)'e
+.ds Oe O\h'-(\w'O'u*4/10)'E
+.	\" corrections for vroff
+.if v .ds ~ \\k:\h'-(\\n(.wu*9/10-\*(#H)'\s-2\u~\d\s+2\h'|\\n:u'
+.if v .ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'\v'-.4m'^\v'.4m'\h'|\\n:u'
+.	\" for low resolution devices (crt and lpr)
+.if \n(.H>23 .if \n(.V>19 \
+\{\
+.	ds : e
+.	ds 8 ss
+.	ds v \h'-1'\o'\(aa\(ga'
+.	ds _ \h'-1'^
+.	ds . \h'-1'.
+.	ds 3 3
+.	ds o a
+.	ds d- d\h'-1'\(ga
+.	ds D- D\h'-1'\(hy
+.	ds th \o'bp'
+.	ds Th \o'LP'
+.	ds ae ae
+.	ds Ae AE
+.	ds oe oe
+.	ds Oe OE
+.\}
+.rm #[ #] #H #V #F C
+.SH "NAME"
+Cleanfeed \- spam filter for Usenet news servers
+.SH "SYNOPSIS"
+\fBINN:\fR Installed as \fBfilter_innd.pl\fR, location is configured into
+INN at compile time.
+.PP
+\fBHighwind servers:\fR <command line> \-program cleanfeed \-body
+.PP
+\fBNNTPRelay\fR: ExternalFilter=c:/perl/bin/perl.exe c:/news/cleanfeed.pl
+.SH "DESCRIPTION"
+A spam filter for Usenet servers.  \fBCleanfeed\fR blocks spam on the way
+into your server, before it is written to disk or propagated to outbound
+feeds.  It can also block binaries in non-binary newsgroups and includes
+several other features to keep your newsfeed clean.
+.PP
+Cleanfeed currently works with INN, Cyclone, Typhoon, Breeze, and
+NNTPRelay servers.  See my webpage (listed at the end of this document)
+for pointers to information about using Cleanfeed with CNews, Diablo,
+Collabra, or INN versions earlier than 1.5.1.
+.SH "USAGE"
+For all versions, place the \fIcleanfeed.conf\fR configuration file
+somewhere, then edit the Cleanfeed source file and change the
+\fB$config_dir\fR option at the top to point to the directory where
+the config file lives.
+.Ip "\fB\s-1INN\s0\fR" 4
+Install the filter file (called cleanfeed) as \fIfilter_innd.pl\fR, and
+cleanfeed.conf, in the location you specified in \fIconfig.data\fR (\s-1INN\s0
+1.7.2 and earlier) or when configuring \s-1INN\s0 2.x (usually the bin/filter
+directory under the installation root).  Make sure both files are readable
+by the news user.  Once in place, the filter is loaded with the command
+\fBctlinnd reload filter.perl meow\fR.  Filtering can be turned on with
+\fBctlinnd perl y\fR and turned off with \fBctlinnd perl n\fR.
+.Ip "\fBCyclone/Typhoon/Breeze\fR" 4
+Add the \fB\-program\fR <file> and \fB\-body\fR options to the \fIbin/start\fR
+script, where <file> is the location and name of the Cleanfeed
+program. Restart the server.  Cleanfeed will run as an external process
+(standalone mode).  \s-1IMPORTANT\s0: make sure both cleanfeed and cleanfeed.conf
+are readable by the news user!  Double-check the permissions as this is
+a fairly common mistake!
+.Ip "\fBNNTPRelay\fR" 4
+Find the ExternalFilter directive in \fIconfig.txt\fR and make it look like:
+.Sp
+ExternalFilter=c:/perl/bin/perl.exe c:/news/cleanfeed.pl
+.Sp
+Cleanfeed will run as an external process (standalone mode).
+.PP
+More detailed installation instructions are provided later in this
+document.
+.SH "CONFIGURATION OPTIONS"
+Configuration is accomplished by setting the various options in the
+\fIcleanfeed.conf\fR configuration file.  This file is evaluated as Perl
+code, so comments can be included in the usual Perl # syntax.  A
+sample default file is included with the distribution.
+.PP
+If you would rather not use \fIcleanfeed.conf\fR, you can set its
+location to \*(L"undef\*(R" in the source and edit the configuration
+variables directly in the source file.
+.PP
+\fIcleanfeed.conf\fR has two sections (which define perl hashes):
+\fB%config_local\fR and \fB%config_append\fR.  Entries in \fB%config_local\fR
+will override the default settings of the same name in the Cleanfeed
+source.  Entries in \fB%config_append\fR can be used to add to most of
+the default regular expressions, for items such as \fBbadguys\fR,
+\fBbin_allowed\fR, \fBpoison_groups\fR, etc.  Settings in \fB%config_append\fR
+for these items will be appended to the default regexps, seperated by
+\*(L"|\*(R" (or).
+.PP
+If you want to completely override the default regexps for these options,
+rather than just add to the defaults, you can add an entry for them into
+the \fB%config_local\fR section of \fIcleanfeed.conf\fR.
+.PP
+All of this is done quite blindly, so if you do anything odd, be careful.
+(Cleanfeed will remove the common mistake of including two \*(L"|\*(R" (or) signs
+in a row.)  All config options are exposed to \fB%config_local\fR, including
+any that may not be present in the sample file.  Only the defined list of
+options are exposed to \fB%config_append\fR.
+.PP
+Options that are on/off or yes/no should be set to 1 for on/yes, or 0
+for off/no.
+.PP
+First, you need to tell Cleanfeed which news server software you are
+using.  At the top of the file, set the appropriate variable to 1.  For
+INN, set \fB$inn\fR; for Cyclone, Typhoon, or Breeze, set \fB$highwind\fR; and
+for NNTPRelay, set \fB$nntprelay\fR.  Ensure the other two (the ones you're
+not using) are set to 0.
+.Sh "\fBGeneral Settings\fR"
+.Ip "\fBaggressive\fR" 4
+Set this to 0 to disable all content-based filters.  Helpful to please
+paranoid lawyers, or paranoid customers.
+.Ip "\fBactive_file\fR" 8
+Set this to the full path to an active file, to allow Cleanfeed to know
+what groups are moderated.  This is normally your server's active file,
+but it doesn't have to be; it is possible, for example, to run Cyclone
+with no active file, but give one to Cleanfeed anyway.
+.Sh "\fB\s-1MD5\s0 Body Filter Settings\fR"
+.Ip "\fBdo_md5\fR" 8
+When turned on, the \s-1MD5\s0 \s-1EMP\s0 checks will be done.  This should be left
+on unless you have a really good reason to turn it off.  If you're
+running Hippo along with Cleanfeed, you might feel Cleanfeed's \s-1MD5\s0
+checks are redundant and want to turn them off, for example.  It
+would probably be better to leave it on with the history turned
+down, instead.
+.Ip "\fBmd5maxmultiposts\fR" 8
+Start rejecting articles after we have seen this many copies, according
+to the \s-1MD5\s0 checksum filter.
+.Ip "\fBMD5History\fR" 8
+How many articles to remember for \s-1MD5-\s0based \s-1EMP\s0 comparison.  Since the \s-1MD5\s0
+filter is not prone to false positives, setting this higher is a good idea
+to catch more spam, if you have the \s-1RAM\s0 to spare.
+.Ip "\fBMD5maxlife\fR" 8
+When a spam is identified by the \s-1MD5\s0 \s-1EMP\s0 filter, it is saved for continual
+rejection. \fBMD5maxlife\fR specifies how long, in hours, to keep a saved
+\s-1MD5\s0 id which is no longer getting any hits.  (A spam id which is still
+getting matches will be saved regardless of age.)  24 hours works well.
+.Ip "\fBfuzzy_md5\fR" 8
+When turned on, the message bodies will be munged up a bit before \s-1MD5\s0
+checksums are generated.  Whitespace and other non-alphanumeric
+characters are stripped and letters are forced to lowercase, as well
+as a couple other bits of treachery to try to defeat the \*(L"hashbuster\*(R"
+spam-bots.  This adds a bit of \*(L"fuzziness\*(R" to the \s-1MD5\s0 filter, and
+results in a performance hit as well.
+.Sp
+Since the smarter spammers have discovered hashbusting, I recommend
+that this be turned on.
+.Ip "\fBfuzzy_max_length\fR" 8
+Sets the maximum amount of lines for an article body to be subject to
+the \fBfuzzy_md5\fR munging (above).  This keeps extremely large articles
+out of those nasty regular expressions.
+.Ip "\fBmd5_skips_followups\fR" 8
+Determines whether the \s-1MD5\s0 filter checks articles with References
+headers.  The default is to skip them.  Setting this option to 0
+will result in all articles passing through the \s-1MD5\s0 filter, which
+can result in a major performance hit, but does close another hole
+in the filter.  If you turn this off, you should increase \fBMD5history\fR
+as well to avoid shortening your \*(L"window\*(R".
+.Ip "\fBMD5HistSize\fR" 8
+The maximum allowed size of the \s-1EMP\s0 memory for the \s-1MD5-\s0checksum \s-1EMP\s0 filter.
+Use this as a \*(L"sanity check\*(R" to prevent a sudden burst of spam from eating
+up all of your memory.  It should be set high enough so that you normally
+never hit this number; use the \fBMD5MaxLife\fR to expire the hash instead.
+.Sh "\fBHeader-Based \s-1EMP\s0 Filter Settings\fR"
+.Ip "\fBdo_phl\fR" 8
+Turns on the \s-1NNTP\s0\-Posting-Host/Lines \s-1EMP\s0 filter.  This filter identifies
+spam by identical posting-host headers and article sizes in a short period
+of time.  You really don't want to turn this off.
+.Ip "\fBdo_fsl\fR" 8
+Turns on the From/Subject/Lines \s-1EMP\s0 filter.  This filter identifies spam
+by identical From and Subject headers and article sizes in a short period
+of time.  This is the one that gets the least number of hits these days,
+so you won't lose much by shutting it off.
+.Ip "\fBmaxmultiposts\fR" 8
+Start rejecting articles after we have seen this many copies, according
+to the header-based \s-1EMP\s0 filter.  Since false positives are somewhat more
+likely with this filter than with \s-1MD5\s0, this should be set appropriately
+higher to reduce the odds.
+.Ip "\fBArticleHistory\fR" 8
+How many ids to remember for header-based \s-1EMP\s0 comparison.  Setting this
+higher will catch more spam because there will be a larger \*(L"window\*(R" to
+look at.  Larger settings will also consume more memory and have a (small)
+impact on performance, as well as slightly increase the chance of a false
+positive (since the sample size will be larger).  Most articles will
+actually take up two entries in this history because there are two
+different header-based filters.
+.Ip "\fBEMPmaxlife\fR" 8
+Same as \fBMD5maxlife\fR but for the header-based \s-1EMP\s0 filter.
+.Ip "\fBEMPHistSize\fR" 8
+Same as \fBMD5HistSize\fR but for the header-based \s-1EMP\s0 filter.  If you are
+running the header-based filter but not the \s-1MD5\s0 filter for whatever
+reason, set this high.
+.Sh "\fBExcessive Crosspost Settings\fR"
+.Ip "\fBmaxgroups\fR" 8
+Reject articles crossposted so that followups will be to more than
+this many newsgroups.
+.Ip "\fBlow_xpost_maxgroups\fR" 8
+Specify a special, lower crosspost limit for certain groups, specifed
+by regular expression in \fBlow_xpost_groups\fR (below).  Useful for being
+more strict in groups plagued by crossposting, such as sex, binaries,
+and jobs groups.  (Replaces the old \fBtfjmaxgroups\fR option.)
+.Sh "\fBMisplaced Binaries Filter\fR"
+.Ip "\fBblock_binaries\fR" 8
+Enables blocking of binary posts in non-binary newsgroups.  Which newsgroups
+allow binaries is configured with \fBbin_allowed\fR (below).
+.Ip "\fBmax_encoded_lines\fR" 8
+Sets the number of uuencoded or base64-encoded lines to allow before
+considering a post to be a binary.  This should be set high enough to pass
+regular \s-1PGP\s0 signatures.  (Those satanic Netscape crypto-sigs can die along
+with the other binaries.)  Default is 15 lines, which may be a little low if
+you are lenient, which you're not.
+.Ip "\fBbinaries_in_mod_groups\fR" 8
+If set, binaries are allowed in spite of \fBblock_binaries\fR if they are
+posted only to moderated groups (requires \fBactive_file\fR).
+.Sh "\fB\s-1HTML\s0\fR"
+.Ip "\fBblock_mime_html\fR" 8
+Enables blocking of \s-1MIME\s0\-encapsulated \s-1HTML\s0 posts.  This does \s-1NOT\s0 affect
+straight text/html or multipart/alternative posts of the type created by
+misconfigured Netscape and Microsoft \*(L"newsreaders\*(R", but \s-1ONLY\s0 posts which
+are \s-1MIME\s0\-encapsulated \s-1HTML\s0, a favorite format of sex spammers which
+often sneaks in under the \s-1EMP\s0 radar.
+.Ip "\fBblock_html\fR" 8
+Enables blocking of \s-1HTML\s0 and multipart/alternative posts.  You can specify
+group patterns where \s-1HTML\s0 is allowed by setting html_allowed (below).
+.Sh "\fBCancel Message Filtering\fR"
+.Ip "\fBblock_late_cancels\fR" 8
+If turned on, cancels for recently rejected articles will be rejected.
+Set the window with \fBMIDmaxlife\fR (below).  This will result in a
+\fIhuge\fR number of rejections if you have multiple full feeds and you
+aren't backlogging.  If you are concerned about your downstream sites
+receiving the cancels, leave this off. If you need a performance boost,
+turn it on.
+.Ip "\fBMIDmaxlife\fR" 8
+How long to remember rejected message-ids so cancels for these posts can
+later be rejected.  Specified in hours.  This only has an effect if
+\fBblock_late_cancels\fR is enabled (above).
+.Sh "\fBDisabling Other Filters\fR"
+.Ip "\fBdo_scoring_filter\fR" 8
+Enables the (new) \*(L"scoring\*(R" filter.  You probably want to leave this on,
+even if you need to turn of \fBaggressive\fR mode (turning off \fBaggressive\fR
+mode will disable the content-based parts of the scoring filter).
+.Ip "\fBdo_mid_filter\fR (\s-1INN\s0 only)" 8
+Enables the message-id filter.  This requires an additional patch to
+\s-1INN\s0 1.7.2, which is included with Cleanfeed (but optional).  The patch
+adds a new Perl hook to check message-id's during the \s-1NNTP\s0 \s-1CHECK\s0
+transaction, and decide whether to refuse the article.  There is a
+patch for this for \s-1INN\s0 2.0 which may get incorporated into the \s-1INN\s0
+distribution at some point.  The default is off.
+.Ip "\fBdo_bot_checks\fR" 8
+Enables the filters that check for spam bot signatures.  The only reason
+you would ever want to turn this off is if you've written your own
+version, or something.  Otherwise, leave it on.
+.Ip "\fBdo_supersedes_filter\fR" 8
+Enables the Excessive Supersedes filter, to catch rogue Supersedes
+attacks.  This filter begins dropping articles with Supersedes headers
+if too many appear from the same posting-host in a short time.  Moderated
+groups are given a higher limit (if \fBactive_file\fR is set), as is
+news.answers.  Default is on.
+.Ip "\fBcheck_supersedes_path\fR" 8
+If set, \fBbad_cancel_paths\fR will also be applied to Supersedes articles.
+Articles with Supersedes headers, where a path element matches the regexp
+in \fBbad_cancel_paths\fR, will be dropped.  Default is on.
+.Ip "\fBdrop_useless_controls\fR" 8
+If set, all control messages of types sendsys, senduuname, and version
+will be dropped.  These are no longer useful and are a hole for
+denial-of-service attacks due to the way \s-1INN\s0 and some other servers
+handle them.  On by default.
+.Ip "\fBdrop_ihave_sendme\fR" 8
+If set, control messages of types ihave and sendme will be dropped.
+See \fBdrop_useless_controls\fR.  If you use these types of control messages,
+turn this off.  If you're not sure, then you're not using them.
+.Ip "\fBdrop_control_with_supersedes\fR" 8
+Drops any and all control messages which contain a Supersedes header.
+Since control messages are not passed through the same filters as regular
+messages, a rogue Supersedes attack can use control messages to avoid
+filtering; this option closes this hole.  Legitimate control messages
+don't have Supersedes headers.  On by default.
+.Sh "\fBHash-Trimming\fR"
+.Ip "\fBtrimcycles\fR" 8
+The \s-1EMP\s0 memories are trimmed every \fBtrimcycles\fR times through the filter.
+.Ip "\fBEMPstarttrimming\fR" 8
+Tells the filter not to waste time trimming the \s-1EMP\s0 memories until they
+have this many entries.  Just a minor performance enhancement during
+the first hours the filter is running or when you first start \fBinnd\fR.
+.Sh "\fBLogging\fR"
+.Ip "\fBverbose\fR" 8
+When turned on, verbose logging to news.notice will happen; spam domains
+will be listed, etc.  When off, only general messages will be logged,
+making the news.daily summaries less interesting but much shorter and
+more to the point.  (There is, alas, no way to shut off news.notice
+logging entirely.)  (news.notice only applies to \s-1INN\s0.)  Note that this
+will not reduce the number of log entries, but only their verbosity.
+.Ip "\fBlogfile\fR (Standalone Mode)" 8
+If set to the path to a file, this will enable logging of message-ids
+of all articles processed by the filter.  Rejections will be logged
+with the reason for rejection.  Note that this will create a very large
+logfile which you will need to rotate or delete (see \fBmax_log_size\fR,
+below).
+.Ip "\fBreportfile\fR (Standalone Mode)" 8
+If set to the path to a file, this will enable generation of a simple
+report of articles accepted and rejected.  The report file will contain
+one entry per line with the start time, end time, number of articles
+accepted, and number of articles rejected, tab-separated.
+.Ip "\fBlog_accepts\fR (Standalone Mode)" 8
+When using the above logfiles, this setting determines whether articles
+accepted should be logged.  When disabled, only rejections will be logged.
+.Ip "\fBmax_log_size\fR (Standalone Mode)" 8
+The size at which to rotate the \fBlogfile\fR.  This will be replaced by
+time-based rotation at some point.
+.Ip "\fBstatfile\fR" 8
+If this is set to the full path of a file, a crude stats file will be
+written each time the filter is reloaded with \fBctlinnd reload
+filter.perl meow\fR (for \s-1INN\s0) or whenever the Cleanfeed process receives a
+\s-1SIGUSR1\s0 (for standalone mode).  The file shows how many entries are
+present in each of the \s-1EMP\s0 histories, \s-1MID\s0 history and excessive
+supersedes history; timer information if enabled (see \fBtimer_info\fR);
+and the contents of all configuration settings.  Posting-hosts in for
+each supersedes entry will be listed, along with their counts; these
+are not being rejected unless they are over the threshold.  The
+default for this is undef, which disables creation of the stat file.
+.Sp
+More comprehensive stats are planned for the future.
+.Sh "\fBTiming Info\fR"
+.Ip "\fBtimer_info\fR" 8
+When enabled, Cleanfeed will generate timing statistics telling you
+how many articles per second are being examined by the filter and
+being accepted by the filter.  This information will appear in the
+statfile if this is enabled, and in the output of \s-1INN\s0's \fBctlinnd mode\fR
+if the \fImode.patch\fR is applied to \s-1INN\s0.  Note that the accepted/second
+rate is not necessarily the rate at which your server is accepting
+articles; articles can be rejected by the server after Cleanfeed
+passes them, for example if they are posted to groups not in your
+active file.
+.Ip "\fBtimer_interval\fR" 8
+The period over which to average timing information, in seconds.  The
+default is 600 seconds, or 5 minutes.
+.Sh "\fBDebugging\fR"
+.Ip "\fBdebug_batch_directory\fR" 8
+Specifies a directory where debugging \*(L"batchfiles\*(R" can be written.
+See the Hacker's Guide in this document for more information.
+.Ip "\fBdebug_batch_size\fR" 8
+The maximum size of a debugging batchfile before it gets rotated.
+Rotation is done by renaming the file to file.1, file.2, etc.,
+using the lowest number that doesn't already exist.
+.Sh "\fBRegular Expressions\fR"
+You can add to most of these regular expressions in the \fB%config_append\fR
+section of \fIcleanfeed.conf\fR; settings you add there will be added to
+the defaults, rather than overriding them.  If you want to completely
+override the default settings you can add entries for these to the
+\fB%config_local\fR section instead.
+.Ip "\fBbin_allowed\fR" 8
+This is a regular expression telling the anti-binary filter in which
+newsgroups binaries are allowed.  If all groups in the Newsgroups header
+match this pattern, binaries are allowed through the filter.  (This
+obviously has no effect when the binary filter is disabled.)  If the
+binary filter is enabled and this is set to a null string (by overriding
+the default in the local config) the result will be blocking all binaries
+regardless of where they are posted.
+.Ip "\fBpoison_groups\fR" 8
+If any groups in the Newsgroups header match this regexp, the article
+will be rejected.  Thus you can reject crossposts to certain groups even
+if they are also posted to groups you carry.
+.Ip "\fBhtml_allowed\fR" 8
+This is a regular expression telling the anti-\s-1HTML\s0 filter in which
+newsgroups \s-1HTML\s0 and multipart/alternative posts are allowed.  This
+only has an effect if \fBblock_html\fR is turned on (above).  The default
+(to allow \s-1HTML\s0 in microsoft.* groups) can be added to in \fIcleanfeed.conf\fR.
+.Sp
+If you don't want to allow \s-1HTML\s0 anywhere, not even the microsoft.*
+groups, override this setting in the local configuration and set it
+to a null string or undef.
+.Ip "\fBmd5exclude\fR" 8
+If an article is posted only to groups matching this regexp, the \s-1MD5\s0 \s-1EMP\s0
+filter will not be applied.  Useful for \*(L"test\*(R" groups where it's okay
+for lots of the posts to be the same.
+.Ip "\fBallexclude\fR" 8
+If an article is posted only to groups matching this regexp, \s-1NO\s0 checks
+are applied at all.
+.Ip "\fBlow_xpost_groups\fR" 8
+If a group matches this regular expression, it gets a special crosspost
+limit, set in \fBlow_xpost_maxgroups\fR, rather than the general crosspost
+limit set in \fBmaxgroups\fR.  This is useful for groups plagued by excessive
+crossposting, such as sex, binaries, and jobs groups.  The default is
+to limit crossposts to 6 groups in test, forsale, and jobs groups.
+Setting this to a null string, or undef, will disable this feature.
+.Ip "\fBbadguys\fR" 8
+This is a monster regular expression containing domains of known spammers.
+Only the \*(L"middle\*(R" part of the domains are listed; these are checked as
+email addresses in From headers by appending a list of top-level domains
+to the end, and as URLs by prepending http:// and an optional \*(L"www.\*(R".  If
+you modify this list, be \fIvery\fR careful not to end up with \*(L"||\*(R" in there
+(two \*(L"or\*(R" signs in a row); this will match every single post that comes
+through, which is Bad.
+.Ip "\fBbaddomainpat\fR" 8
+If a post contains a \s-1URL\s0 for a site whose domain name matches this
+pattern (in .com, .net, and .nu TLDs only) the post will be rejected.
+For example, there are hundreds of spamming porn sites whose domain names
+begin or end with \*(L"xxx\*(R".  This prevents us from having to keep up with
+their nonsense.  Yes, it's a little aggressive, but it works.
+.Ip "\fBexempt\fR" 8
+Regular expression of \s-1NNTP\s0\-Posting-Hosts that are exempt from the
+posting-host-based \s-1EMP\s0 filter.  This is for high-output systems where
+all posts contain the same \s-1NNTP\s0\-Posting-Host header, such as \s-1AOL\s0, which
+if not exempted would end up hitting the posting-host \s-1EMP\s0 filter with
+all of their posts.  There aren't many of these out there; a \*(L"regular\*(R"
+multi-user system does not present a problem because the filter doesn't
+kick in until it sees a large number of posts from the same posting-host
+and also of the same length, in a short period of time.
+.Ip "\fBsupersedes_exempt\fR" 8
+Regular expression of \s-1NNTP\s0\-Posting-Hosts that are exempt from the
+excessive supersedes filter.  Generally this will be systems which
+post a lot of FAQs.
+.Ip "\fBbad_cancel_paths\fR" 8
+Cancel messages will be rejected if the Path header contains elements
+matching this regular expression.  Also applied to the \s-1NNTP\s0\-Posting-Host.
+If \fBcheck_supersedes_path\fR is set, this will also be checked against
+the Path header of articles with Supersedes headers.  This list contains
+sites which are or have recently been the source of rogue cancel attacks.
+.Ip "\fBrefuse_messageids\fR (\s-1INN\s0 only)" 8
+If you have \fBdo_mid_filter\fR (above) enabled, and you have the optional
+message-id patch applied to \s-1INN\s0 (or otherwise have obtained the hook
+for filter_messageid in \s-1INN\s0 2.0), this regular expression will be applied
+to message-ids as they are offered to your server, and they will be
+refused if it matches.
+.Ip "\fBnet_abuse_groups\fR" 8
+.Ip "\fBspam_report_groups\fR" 8
+These regular expressions are used to exempt certain groups from certain
+filters; for example, groups expected to contain spam reports, example
+spams, NoCeM notices, etc.  These are not in \fIcleanfeed.conf\fR; if you
+need to add to them please let me know.
+.PP
+After modifying the filter file, always check for mistakes by typing:
+.PP
+.Vb 1
+\& perl -cw filter_innd.pl (or cleanfeed or whatever you called it)
+.Ve
+There should be no errors and no warnings.
+.PP
+You can check \fIcleanfeed.conf\fR with:
+.PP
+.Vb 1
+\& perl -cw cleanfeed.conf
+.Ve
+You will get several warnings about variables being used only once;
+these can be ignored.
+.PP
+If you are running \s-1INN\s0, you can modify the file and reload it with
+\fBctlinnd reload filter.perl meow\fR while the server is running.  The
+configuration in f<cleanfeed.conf> will be reloaded at this time as
+well.
+.PP
+With the Highwind servers, modifying the program will require a server
+restart (use the \fIbin/restart\fR script).  Note that this will result in
+all connections (including newsreader clients) being dropped.  This
+is not my fault. :)
+.PP
+When in standalone mode, configuration from \fIcleanfeed.conf\fR can be
+reloaded by sending Cleanfeed a \s-1SIGHUP\s0.
+.PP
+I have no idea what NNTPRelay does, but I'm guessing it needs a restart
+as well.
+.PP
+\s-1IMPORTANT\s0 \s-1NOTE\s0:  A common mistake is not setting file permissions on
+cleanfeed/filter_innd.pl, cleanfeed.conf, and cleanfeed.local so that
+they are readable by the news user.  Please double-check your permissions!
+If Cleanfeed is running, and fails to successfully load cleanfeed.conf,
+it will use the default settings instead of those you specified in the
+config file.
+.SH "INSTALLATION \- INN"
+These instructions assume you have the Perl hooks compiled into INN.
+If you don't, you will need to add them and rebuild the INN distribution
+before proceeding.
+.PP
+With INN, Perl is embedded into the innd program.  The filter file
+defines subroutines that are called by innd at the appropriate times.
+.Sh "\s-1SYSTEM\s0 \s-1REQUIREMENTS\s0"
+In order to run Cleanfeed with \s-1INN\s0, you will need:
+.Ip "\(bu" 4
+\s-1INN\s0 1.5.1 or later (1.7.2+insync1.1d or 2.1 recommended)
+.Ip "\(bu" 4
+Perl 5.004 or later
+.Ip "\(bu" 4
+Perl hooks compiled into \s-1INN\s0
+.Ip "\(bu" 4
+The \s-1MD5\s0 Perl module
+.PP
+\s-1INN\s0 is available from:
+    http://www.isc.org/inn.html
+.PP
+The Insync distribution of \s-1INN\s0 (highly recommended if you aren't running
+\s-1INN\s0 2.1) is available from:
+    http://www.insync.net/~aos/inn.html
+.PP
+The \s-1MD5\s0 Perl module is available from:
+    http://www.perl.com/\s-1CPAN\s0\-local/modules/by-module/\s-1MD5\s0/
+.PP
+Perl itself is available from the Perl home page:
+    http://www.perl.com/
+.Sh "\s-1PATCHES\s0 \s-1AND\s0 \s-1STUFF\s0"
+\s-1INN\s0 2.0 includes everything you need to run Cleanfeed, except the \s-1MD5\s0
+Perl module.
+.PP
+With earlier versions, Cleanfeed requires some patches to \s-1INN\s0 in order
+to function properly.
+.PP
+If you are running \s-1INN\s0 1.7.2+insync1.1d, you already have the original
+\fIfilter.patch\fR and the \fIdynamic-load.patch\fR;  You need only apply the
+\fIupgrade.patch\fR.
+.PP
+None of these patches are against \s-1INN\s0 2.1; the \*(L"extra feature\*(R" ones
+like \fImode.patch\fR may not apply to 2.1.  Ports are always welcome.
+.Ip "\fBfilter.patch\fR" 4
+This patch provides the basic functionality for Cleanfeed by making some
+extra headers available to the Perl filter, as well as message bodies.
+This patch was changed in version 0.95.3.  It is against \s-1INN\s0 1.7.2 and
+should be applied in the innd directory.  This patch is included in the
+insync \*(L"megapatch\*(R" for \s-1INN\s0 as of version 1.1c, so if you are running this
+version of \s-1INN\s0 you need not apply this patch.  Not necessary for \s-1INN\s0 2.x.
+.Ip "\fBdynamic-load.patch\fR" 4
+This patch enables \s-1INN\s0's Perl interpreter to load dynamic modules.  It is
+necessary for \s-1MD5\s0 support.  The patch is against \s-1INN\s0 1.7+insync and should
+be applied in the lib directory (\s-1NOT\s0 the innd directory).  It applies cleanly
+to other versions of \s-1INN\s0 including 1.5.1 and 1.7.2.  This patch is included
+in the insync \*(L"megapatch\*(R" for \s-1INN\s0 as of version 1.1d, so if you are running
+this version of \s-1INN\s0 you need not apply this patch.  Not necessary for \s-1INN\s0 2.x.
+.Sp
+If you are still using \s-1INN\s0 1.5.1, you can use \fIdynamic-1.5.1.patch\fR instead.
+.Sp
+In order to compile \s-1INN\s0 with the new patch, you need to edit the \s-1PERL_LIB\s0
+entry in \fIconfig.data\fR.  Type this command at the shell, and paste its output
+into \fIconfig.data\fR as \s-1PERL_LIB\s0:
+.Sp
+.Vb 1
+\&    perl -MExtUtils::Embed -e ldopts
+.Ve
+Most systems also allow you to simply enter that line in backquotes as \s-1PERL_LIB\s0.    
+.Sp
+\fBThis patch requires Perl 5.004 or later!  \s-1INN\s0 will not compile linked with
+Perl 5.003 after following these instructions!\fR
+.Sp
+\fB\s-1AIX\s0:\fR There is a problem with Perl dynamic loading from \s-1INN\s0 under the
+\s-1AIX\s0 operating system.  In simple terms, it doesn't work.  This seems to
+be a problem with the gcc compiler.  Success has been reported by
+rebuilding both Perl and \s-1INN\s0 with \s-1IBM\s0's commercial compiler CSet
+(a.k.a. xlC).
+.Sp
+\fBSolaris:\fR There have been multiple reports of Cleanfeed not working
+under Solaris if any part of the system -- \s-1INN\s0, Perl, or the \s-1MD5\s0 module --
+are compiled using egcs.  Success has been reported by recompiling
+everything with gcc, and by upgrading to the very newest egcs.
+.Ip "\fBupgrade.patch\fR" 4
+For current users of Cleanfeed, this is a patch for an already-patched
+\s-1INN\s0, or for 1.7.2+insync1.1d, to bring you up to the new version of the
+Cleanfeed patch.  Not applying this patch right now will only lose you a
+couple of filters, and nothing will break if you don't apply it (no
+changes to the filter source or configuration will be required).
+.Ip "\fBmessageid.patch\fR" 4
+This is a patch which adds a new Perl hook to innd, filter_messageid.
+This allows you to run a Perl subroutine against each message-id as
+it is offered to your server, and decide whether to refuse the article
+before it is even sent to your server.  Cleanfeed includes a small
+filter_messageid.  This patch is entirely optional.
+.Ip "\fBmode.patch\fR" 4
+This patch adds a line to \s-1INN\s0's \fBctlinnd mode\fR output for Perl filter
+status.  The output line is generated by the \fBfilter_stats\fR subroutine.
+The default output contains the number of articles accepted, rejected
+and refused since the filter started, and the sizes of the \s-1EMP\s0,
+Message-\s-1ID\s0, and Excessive Supersedes hashes.  If \fBtimer_info\fR is enabled,
+this will also include the rate in articles per second (rounded to the
+nearest tenth) at which articles were examined (total sent through the
+filter) and accepted by the filter, averaged over the \fBtimer_interval\fR
+number of seconds.
+.PP
+After applying the patches, rebuild all of \s-1INN\s0 and do a \*(L"make update\*(R".
+The first patch (\fIfilter.patch\fR) only requires innd to be rebuilt, but
+the \fIdynamic-load.patch\fR requires you to rebuild the whole distribution.
+Current users upgrading with \fIupgrade.patch\fR need only rebuild innd and
+reinstall that executable.
+.PP
+Thus:
+.PP
+.Vb 12
+\&    cd inn    [to the top-level source directory]
+\&    make clean
+\&    cd innd
+\&    cp wherever/filter.patch .     [from the Cleanfeed distribution]
+\&    patch <filter.patch
+\&    cd ../lib
+\&    cp wherever/dynamic-load.patch   [from the Cleanfeed distribution]
+\&    patch <dynamic-load.patch
+\&    cd ../config
+\&    emacs config.data    [edit the PERL_LIB entry as above]
+\&    make all
+\&    make update
+.Ve
+Finally, you need to install the \s-1MD5\s0 Perl module, no matter what version of
+\s-1INN\s0 you are running.
+.Sh "\s-1INSTALLING\s0 \s-1CLEANFEED\s0 \- \s-1INN\s0"
+In \s-1INN\s0 1.7.2 and earlier, the location where \s-1INN\s0 looks for the Perl filter
+is set in \fIconfig.data\fR, as _PATH_PERL_FILTER_INND.  By default, the
+filename is \fIfilter_innd.pl\fR.  The Cleanfeed filter program file should
+be installed in this location.  \s-1INN\s0 comes with an example filter_innd.pl
+file; move this file (or whatever other filter is in place) out of the way
+first.
+.PP
+Before putting the filter in place, edit the file, changing \fB$config_dir\fR
+to the location of your \fIcleanfeed.conf\fR file.
+.PP
+After editing the file, always check for errors with the command:
+.PP
+.Vb 1
+\&    perl -cw filter_innd.pl
+.Ve
+Once the file is in place, tell innd to reload it:
+.PP
+.Vb 1
+\&    ctlinnd reload filter.perl meow
+.Ve
+And, if Perl filtering is currently disabled, enable it:
+.PP
+.Vb 1
+\&    ctlinnd perl y
+.Ve
+Now, you can watch it working by looking at your news.notice log:
+.PP
+.Vb 1
+\&    tail -f /var/log/news/news.notice
+.Ve
+If your server is running a full feed, you should start seeing a
+constant stream of rejections almost immediately.
+.SH "INSTALLATION \- HIGHWIND SERVERS"
+The various Highwind server packages (Cyclone, Typhoon, and Breeze)
+all have the same external filter interface.  The filter runs as
+its own process, reading from standard input and writing to standard
+output.
+.Sh "\s-1SYSTEM\s0 \s-1REQUIREMENTS\s0"
+In order to run Cleanfeed with a Highwind server, you will need:
+.Ip "\(bu" 4
+Cyclone, Typhoon or Breeze
+.Ip "\(bu" 4
+Perl 5.003 or later
+.Ip "\(bu" 4
+The \s-1MD5\s0 Perl module
+.PP
+The Highwind servers are commercial products.  For more information:
+    http://www.highwind.com/
+.PP
+The \s-1MD5\s0 Perl module is available from:
+    http://www.perl.com/\s-1CPAN\s0\-local/modules/by-module/\s-1MD5\s0/
+.PP
+Perl itself is available from the Perl home page:
+    http://www.perl.com/
+.Sh "\s-1INSTALLING\s0 \s-1CLEANFEED\s0 \- \s-1HIGHWIND\s0"
+The Cleanfeed program file should be installed as \*(L"cleanfeed\*(R" in your
+news server's bin directory (cyclone/bin, etc).  Make it owned by
+news:news and make it executable.
+.PP
+Before putting the filter in place, edit the file, changing \fB$config_dir\fR
+to the location of your \fIcleanfeed.conf\fR file.  Also ensure that the
+shebang line (the first line of the file, starting with #!) points to
+the correct location of your perl executable.
+.PP
+After editing the file, always check for errors with the command:
+.PP
+.Vb 1
+\&    perl -cw cleanfeed
+.Ve
+There should be no warnings.
+.PP
+Now, edit your \fIbin/start\fR script.  You need to add two options to the
+command line that starts up the server process, the \fB\-program\fR option to
+tell it what program to use as a filter, and the \fB\-body\fR option to tell
+it to send the bodies as well as the headers.
+.PP
+typhoond \-program /typhoon/bin/cleanfeed \-body
+.PP
+\&...along with whatever else you have cluttering up the command line.
+.PP
+(Highwind has indicated that this may/will be a config file option
+in a future release.)
+.PP
+Now you can restart the server with the \fIbin/restart\fR script.  Check
+to make sure Cleanfeed is running, with \*(L"ps \-ef\*(R" or \*(L"top\*(R".  If
+Cyclone/Typhoon is unable to start the filter for some reason, it will
+log an error via syslog.  The error will not be terribly helpful.
+.PP
+You can make Cleanfeed reload its configuration from \fIcleanfeed.conf\fR
+and local code from \fIcleanfeed.local\fR by sending it a \s-1SIGHUP\s0.
+.SH "INSTALLATION \- NNTPRELAY"
+Please note that I do not have an NNTPRelay server, nor access to one,
+nor much interest in mucking around with Windows NT, and thus I have
+not tested the NNTPRelay filtering support myself.  The necessary changes
+and notes were contributed by someone else.  Additions and improvements
+to this documentation would be most welcome.
+.PP
+The filter interface in NNTPRelay is pretty much the same as in the
+Highwind servers.
+.Sh "\s-1SYSTEM\s0 \s-1REQUIREMENTS\s0"
+In order to run Cleanfeed with NNTPRelay, you will need:
+.Ip "\(bu" 4
+NNTPRelay version 1.1b4 or later
+.Ip "\(bu" 4
+Perl 5.003 or later
+.Ip "\(bu" 4
+The \s-1MD5\s0 Perl module
+.PP
+NNTPRelay is available from:
+    http://nntprelay.maxwell.syr.edu/
+.PP
+An \s-1NT\s0 binary release of Perl 5.004, which apparently includes the \s-1MD5\s0
+module, can be found at:
+    http://www.perl.com/\s-1CPAN/\s0ports/win32/Standard/x86
+.PP
+The \s-1MD5\s0 module (in source code) can be found at:
+    http://www.perl.com/\s-1CPAN\s0\-local/modules/by-module/\s-1MD5\s0/
+.Sh "\s-1INSTALLING\s0 \s-1CLEANFEED\s0 \- \s-1NNTPRELAY\s0"
+Before putting the filter in place, edit the file, changing \fB$config_dir\fR
+to the location of your \fIcleanfeed.conf\fR file.
+.PP
+Install the Cleanfeed program file wherever is appropriate on
+your system, as \*(L"cleanfeed.pl\*(R".  Edit NNTPRelay's \fIconfig.txt\fR
+file, adding an entry like this:
+.PP
+.Vb 1
+\&    ExternalFilter=c:/perl/bin/perl.exe c:/news/cleanfeed.pl
+.Ve
+Of course, use the correct path to your Perl executable and to
+the Cleanfeed program file.  Now restart NNTPRelay.  If you
+defined a logfile in Cleanfeed, it should appear.
+.SH "THE HACKER'S GUIDE"
+Cleanfeed will look for a file called \fIcleanfeed.local\fR, in the same
+directory as \fIcleanfeed.conf\fR.  If this file exists, it will be loaded
+and evaluated as Perl code right after the config file.  This enables
+you to provide your own local filter code which will survive an upgrade
+of the main Cleanfeed source.
+.PP
+It will be reloaded when the filter is reloaded with \fBctlinnd reload
+filter.perl meow\fR (for INN), or when configuration is reloaded with a
+SIGHUP (in standalone mode).  This means that you can modify the running
+code without restarting Cleanfeed.
+.PP
+\fIcleanfeed.local\fR can define a number of different subroutines, which,
+if defined, will be called at various points in the filter process.
+Other subroutines can, of course, be defined as required by your code.
+.PP
+The file is simply re-evaluated each time.  So, if you remove a subroutine
+from the file completely, that subroutine will remain defined after the
+reload, because nothing replaced it.  You will need instead to define it
+as an empty subroutine, or explicitely undef it, to make it go away.
+.Sh "\s-1STUFF\s0 \s-1YOU\s0 \s-1CAN\s0 \s-1DEFINE\s0"
+Cleanfeed will call the following subroutines, if they are defined.
+See the section on return values for instructions on what your code
+should return.
+.Ip "\fBlocal_config\fR" 4
+This is called after configuration is loaded, each time.  It will be
+called when the filter is reloaded (with \s-1INN\s0) or when configuration
+is reloaded with \s-1SIGHUP\s0 (running standalone), as well as when the
+filter is first run.  No return value is expected.
+.Ip "\fBlocal_filter_before_emp\fR" 4
+Called for each (non-control) article, before any other filters.
+General-purpose spam filters shouldn't go here, because you really
+want to populate the \s-1EMP\s0 hashes first.
+.Ip "\fBlocal_filter_after_emp\fR" 4
+Called for each (non-control) article, after the \s-1EMP\s0 filters but
+before any other filters.  
+.Ip "\fBlocal_filter_middle\fR" 4
+Called for each (non-control) article, after the \*(L"simple\*(R" filters
+but before the \*(L"expensive\*(R" body checks.
+.Ip "\fBlocal_filter_scoring\fR" 4
+Called during the scoring filter.  Return the value, positive or
+negative, by which to adjust the article's score.
+.Sp
+\fBWarning:  Here there be dragons!\fR  If you're going to play with
+this please examine the existing source, and use the debugging
+routines to watch what you're doing.
+.Ip "\fBlocal_filter_last\fR" 4
+Called for each (non-control) article, after all other filters
+are done.
+.Ip "\fBlocal_filter_cancel\fR" 4
+Called for all cancel control messages.
+.Ip "\fBlocal_filter_newrmgroup\fR" 4
+Called for all newgroup and rmgroup control messages.
+.Sh "\s-1RETURN\s0 \s-1VALUES\s0"
+The general filtering subroutines you can define (\fBlocal_filter_before_emp\fR,
+\fBlocal_filter_after_emp\fR, \fBlocal_filter_middle\fR, \fBlocal_filter_last\fR,
+\fBlocal_filter_cancel\fR, and \fBlocal_filter_newrmgroup\fR) are expected to
+return a value indicating whether you want to accept the article being
+examined.  If the article is okay, you should return "" (empty string),
+in which case filtering will proceed as usual.  If you want to reject the
+article, you return any other string, which will be used as the reason.
+.PP
+The rejection code actually expects two return values -- the first string
+is the \*(L"verbose\*(R" rejection message, and the second is the \*(L"non-verbose\*(R"
+message (see the \fBverbose\fR configuration option).  If only one is
+supplied, it will be used for both purposes.
+.PP
+The scoring filter calls \fBlocal_filter_scoring\fR, which is expected
+to return the value, postive or negative, by which the article's score
+should be adjusted.
+.Sh "\s-1WHAT\s0 \s-1YOU\s0 \s-1GET\s0"
+Your subroutines get information about the article in several variables.
+.Ip "\fB%hdr\fR" 4
+A hash containing the article headers.  The key is the header name, in
+\*(L"canonical\*(R" case as \s-1INN\s0 likes them; the value is the content of the header.
+When running under \s-1INN\s0, only headers known to \s-1INN\s0 will be included in the
+hash (which includes any header used anywhere in Cleanfeed).  In standalone
+mode, all headers will be present, but only the known headers will be sent
+in canonical case; others will have the header name (and thus hash key) in
+whatever case they are in the article itself, making them difficult to find
+and use consistently.
+.Sp
+The message body is in this hash under the key _\|_BODY_\|_.  If running \s-1INN\s0
+2.x with storageapi, it will be provided in wireformat, with lines
+terminated in \er\en rather than just \en.  With the traditional spool
+format (and in all cases with \s-1INN\s0 prior to 2.x) lines will be terminated
+only with \en.
+.Sp
+Examples:
+.Sp
+To get the Subject header as a scalar:  \f(CW$hdr\fR{'Subject'}
+.Sp
+To get the entire message body as a scalar:  \f(CW$hdr\fR{'_\|_BODY_\|_'}
+.Ip "\fB%lch\fR" 4
+A hash containing lowercased versions of some of the article headers.
+The hash keys are the header names in all lowercase; the values are the
+contents of the headers, with all letters forced to lowercase.
+.Sp
+Currently, the only headers added to this hash are From, Organization,
+Subject, Content-Type, X\-Newsreader, X\-Newsposter, Message-\s-1ID\s0, and Sender.
+.Sp
+This hash is not availabe to \fBlocal_filter_before_emp\fR.
+.Ip "\fB@groups\fR" 4
+An array containing the newsgroups the article is posted to (from the
+Newsgroups header).  You can find out how many groups the article is
+crossposted to with \*(L"scalar \f(CW@groups\fR\*(R".
+.Ip "\fB@followups\fR" 4
+An array containing the newsgroups to which followups are set (from the
+Followup-To header).  If the article has no Followup-To header, this
+array will be identical to \f(CW@groups\fR.  You can find out how many groups
+followups are set to with \*(L"scalar \f(CW@followups\fR\*(R".  This is the preferred
+way to limit crossposting, because limiting only by the Newsgroups
+header will catch FAQs and such.
+.Ip "\fB$lines\fR" 4
+The number of lines in the message body.  This is not taken from the Lines
+header as that can be client-supplied to fool filtering; this is determined
+by counting the lines in the message body.
+.Ip "\fB%gr\fR" 4
+A hash containing information about the groups the article is posted
+to.  This isn't very straightforward and may not be useful to you, but
+I'm including it in this documentation for completeness.  The following
+entries may be present in this hash:
+.Sp
+\fB$gr{'net'}\fR \- the number of net.* (Usenet \s-1II\s0) newsgroups the article is
+posted to, if any.
+.Sp
+\fB$gr{'other'}\fR \- the number of non-net.* groups the article is posted to.
+.Sp
+\fB$gr{'md5skip'}\fR \- true if the article should be exempted from the \s-1MD5\s0
+body checks (if all newsgroups match the regexp in \fBmd5exclude\fR).
+.Sp
+\fB$gr{'binary'}\fR \- true if the article is posted only to groups where
+binaries are allowed (if all newsgroups match \fBbin_allowed\fR).
+.Sp
+\fB$gr{'html'}\fR \- true if the article is posted only to groups where html
+is allowed (if all newsgroups match \fBhtml_allowed\fR).
+.Sp
+\fB$gr{'poison'}\fR \- number of \*(L'poison\*(R' newsgroups this article is posted
+to (matching \fBpoison_groups\fR).  If this is present, you'll only see this
+entry in \fBlocal_filter_before_emp\fR and \fBlocal_filter_after_emp\fR because
+it will be rejected after that.
+.Sp
+\fB$gr{'abuse'}\fR \- number of \*(L'net abuse\*(R' newsgroups this article is posted
+to (matching \fBnet_abuse_groups\fR).
+.Sp
+\fB$gr{'reports'}\fR \- number of \*(L'spam reports\*(R' newsgroups this article is
+posted to (matching \fBspam_report_groups\fR).
+.Sp
+\fB$gr{'low_xpost'}\fR \- number of \*(L'low crosspost limit\*(R' groups this article
+is posted to (matching \fBlow_xpost_groups\fR).
+.Sp
+\fB$gr{'mod'}\fR \- number of moderated groups this article is posted to
+(requires that Cleanfeed have an active file).
+.Sp
+\fB$gr{'allmod'}\fR \- true if this article is posted only to moderated groups.
+.Sp
+\fB$gr{'faq'}\fR \- true if this article is crossposted to news.answers.
+.Ip "\fB%config\fR" 4
+A hash containing all configuration options.
+.Sh "\s-1DEBUGGING\s0"
+When you make filtering changes, you should always check the results for
+false positives.  I've provided two subroutines to help you do this:
+\fBwriteheaders()\fR and \fBwritefull()\fR.
+.PP
+First, make sure \fBdebug_batch_directory\fR is set in your configuration.
+Set this to a directory that is writable by the news user.
+.PP
+Call either of these subroutines with one argument, the basename of the
+batch file you want to write the current article to.  \fBwriteheaders\fR
+will dump the article's headers out to the file (with \s-1INN\s0 this will only
+give you the known headers).  \fBwritefull\fR will dump the full article,
+headers (again, known headers with \s-1INN\s0) and body.  The file will be
+rotated if it becomes larger than \fBdebug_batch_size\fR, set in your
+configuration.  The rotation is simple, a number is appended to the end
+of the file, and incremented until the filename does not exist.  You'll
+have to delete the old files yourself.
+.PP
+When testing a new filter, simply call \fBwriteheaders ("batchfile")\fR or
+\fBwritefull ("batchfile")\fR when you're going to reject an article.
+Then you can look at the file to make sure you're doing what you think
+you're doing.
+.SH "SIGNALS"
+When running under Cyclone, Typhoon, Breeze, or NNTPRelay (standalone
+mode), Cleanfeed will catch SIGHUP, and reload its configuration from
+\fIcleanfeed.conf\fR.  It will also reload and reevaluate \fIcleanfeed.local\fR
+if you're using it.  Note that, unlike INN, there is no way to reload the
+filter code itself without restarting the server.
+.PP
+Cleanfeed in standalone mode will also catch SIGUSR1 and write its crude
+current-status file (see \fBstatfile\fR in the config section) on the next
+cycle through the filter.
+.PP
+(I honestly don't know if SIGUSR1 and SIGHUP are things which exist on NT
+for NNTPRelay.)
+.SH "CREDITS"
+Written by Jeremy Nixon <jeremy@exit109.com>.
+.PP
+Originally based on Jeff Garzik's EMP filter.
+.PP
+I can't possibly mention everyone who has submitted ideas or fixes
+for the filter, but I'd like to acknowledge the substantial
+contributions of several people:  Danhiel Baker, Frank Copeland,
+Brian Moore, John Payne, Russ Allbery, David Riley, and SeokChan LEE.
+Thanks, guys.
+.PP
+\fIdynamic-load.patch\fR is from Piers Cawley.
+The body-filtering portion of the INN \fIfilter.patch\fR is from Jeff Garzik.
+\fImessageid.patch\fR is from Ed Mooring.
+\fImode.patch\fR is from John Payne.
+.SH "COPYRIGHT"
+Copyright 1997-1998 by Jeremy Nixon, All Rights Reserved.
+.SH "LICENSE"
+This software may be distributed freely, provided it is intact (including
+all the files from the original archive).  You may modify it, and you
+may distribute your modified version, provided the original work is
+credited to the appropriate authors, and your work is credited to you
+(don't make changes and pass them off as my work), and that you aren't
+charging for it.
+.SH "AVAILABILITY"
+This filter is available at:
+.PP
+http://www.exit109.com/~jeremy/news/antispam.html
+ftp://ftp.exit109.com/users/jeremy/
+
+.rn }` ''
+.IX Title "cleanfeed 8"
+.IX Name "Cleanfeed - spam filter for Usenet news servers"
+
+.IX Header "NAME"
+
+.IX Header "SYNOPSIS"
+
+.IX Header "DESCRIPTION"
+
+.IX Header "USAGE"
+
+.IX Item "\fB\s-1INN\s0\fR"
+
+.IX Item "\fBCyclone/Typhoon/Breeze\fR"
+
+.IX Item "\fBNNTPRelay\fR"
+
+.IX Header "CONFIGURATION OPTIONS"
+
+.IX Subsection "\fBGeneral Settings\fR"
+
+.IX Item "\fBaggressive\fR"
+
+.IX Item "\fBactive_file\fR"
+
+.IX Subsection "\fB\s-1MD5\s0 Body Filter Settings\fR"
+
+.IX Item "\fBdo_md5\fR"
+
+.IX Item "\fBmd5maxmultiposts\fR"
+
+.IX Item "\fBMD5History\fR"
+
+.IX Item "\fBMD5maxlife\fR"
+
+.IX Item "\fBfuzzy_md5\fR"
+
+.IX Item "\fBfuzzy_max_length\fR"
+
+.IX Item "\fBmd5_skips_followups\fR"
+
+.IX Item "\fBMD5HistSize\fR"
+
+.IX Subsection "\fBHeader-Based \s-1EMP\s0 Filter Settings\fR"
+
+.IX Item "\fBdo_phl\fR"
+
+.IX Item "\fBdo_fsl\fR"
+
+.IX Item "\fBmaxmultiposts\fR"
+
+.IX Item "\fBArticleHistory\fR"
+
+.IX Item "\fBEMPmaxlife\fR"
+
+.IX Item "\fBEMPHistSize\fR"
+
+.IX Subsection "\fBExcessive Crosspost Settings\fR"
+
+.IX Item "\fBmaxgroups\fR"
+
+.IX Item "\fBlow_xpost_maxgroups\fR"
+
+.IX Subsection "\fBMisplaced Binaries Filter\fR"
+
+.IX Item "\fBblock_binaries\fR"
+
+.IX Item "\fBmax_encoded_lines\fR"
+
+.IX Item "\fBbinaries_in_mod_groups\fR"
+
+.IX Subsection "\fB\s-1HTML\s0\fR"
+
+.IX Item "\fBblock_mime_html\fR"
+
+.IX Item "\fBblock_html\fR"
+
+.IX Subsection "\fBCancel Message Filtering\fR"
+
+.IX Item "\fBblock_late_cancels\fR"
+
+.IX Item "\fBMIDmaxlife\fR"
+
+.IX Subsection "\fBDisabling Other Filters\fR"
+
+.IX Item "\fBdo_scoring_filter\fR"
+
+.IX Item "\fBdo_mid_filter\fR (\s-1INN\s0 only)"
+
+.IX Item "\fBdo_bot_checks\fR"
+
+.IX Item "\fBdo_supersedes_filter\fR"
+
+.IX Item "\fBcheck_supersedes_path\fR"
+
+.IX Item "\fBdrop_useless_controls\fR"
+
+.IX Item "\fBdrop_ihave_sendme\fR"
+
+.IX Item "\fBdrop_control_with_supersedes\fR"
+
+.IX Subsection "\fBHash-Trimming\fR"
+
+.IX Item "\fBtrimcycles\fR"
+
+.IX Item "\fBEMPstarttrimming\fR"
+
+.IX Subsection "\fBLogging\fR"
+
+.IX Item "\fBverbose\fR"
+
+.IX Item "\fBlogfile\fR (Standalone Mode)"
+
+.IX Item "\fBreportfile\fR (Standalone Mode)"
+
+.IX Item "\fBlog_accepts\fR (Standalone Mode)"
+
+.IX Item "\fBmax_log_size\fR (Standalone Mode)"
+
+.IX Item "\fBstatfile\fR"
+
+.IX Subsection "\fBTiming Info\fR"
+
+.IX Item "\fBtimer_info\fR"
+
+.IX Item "\fBtimer_interval\fR"
+
+.IX Subsection "\fBDebugging\fR"
+
+.IX Item "\fBdebug_batch_directory\fR"
+
+.IX Item "\fBdebug_batch_size\fR"
+
+.IX Subsection "\fBRegular Expressions\fR"
+
+.IX Item "\fBbin_allowed\fR"
+
+.IX Item "\fBpoison_groups\fR"
+
+.IX Item "\fBhtml_allowed\fR"
+
+.IX Item "\fBmd5exclude\fR"
+
+.IX Item "\fBallexclude\fR"
+
+.IX Item "\fBlow_xpost_groups\fR"
+
+.IX Item "\fBbadguys\fR"
+
+.IX Item "\fBbaddomainpat\fR"
+
+.IX Item "\fBexempt\fR"
+
+.IX Item "\fBsupersedes_exempt\fR"
+
+.IX Item "\fBbad_cancel_paths\fR"
+
+.IX Item "\fBrefuse_messageids\fR (\s-1INN\s0 only)"
+
+.IX Item "\fBnet_abuse_groups\fR"
+
+.IX Item "\fBspam_report_groups\fR"
+
+.IX Header "INSTALLATION \- INN"
+
+.IX Subsection "\s-1SYSTEM\s0 \s-1REQUIREMENTS\s0"
+
+.IX Item "\(bu"
+
+.IX Item "\(bu"
+
+.IX Item "\(bu"
+
+.IX Item "\(bu"
+
+.IX Subsection "\s-1PATCHES\s0 \s-1AND\s0 \s-1STUFF\s0"
+
+.IX Item "\fBfilter.patch\fR"
+
+.IX Item "\fBdynamic-load.patch\fR"
+
+.IX Item "\fBupgrade.patch\fR"
+
+.IX Item "\fBmessageid.patch\fR"
+
+.IX Item "\fBmode.patch\fR"
+
+.IX Subsection "\s-1INSTALLING\s0 \s-1CLEANFEED\s0 \- \s-1INN\s0"
+
+.IX Header "INSTALLATION \- HIGHWIND SERVERS"
+
+.IX Subsection "\s-1SYSTEM\s0 \s-1REQUIREMENTS\s0"
+
+.IX Item "\(bu"
+
+.IX Item "\(bu"
+
+.IX Item "\(bu"
+
+.IX Subsection "\s-1INSTALLING\s0 \s-1CLEANFEED\s0 \- \s-1HIGHWIND\s0"
+
+.IX Header "INSTALLATION \- NNTPRELAY"
+
+.IX Subsection "\s-1SYSTEM\s0 \s-1REQUIREMENTS\s0"
+
+.IX Item "\(bu"
+
+.IX Item "\(bu"
+
+.IX Item "\(bu"
+
+.IX Subsection "\s-1INSTALLING\s0 \s-1CLEANFEED\s0 \- \s-1NNTPRELAY\s0"
+
+.IX Header "THE HACKER'S GUIDE"
+
+.IX Subsection "\s-1STUFF\s0 \s-1YOU\s0 \s-1CAN\s0 \s-1DEFINE\s0"
+
+.IX Item "\fBlocal_config\fR"
+
+.IX Item "\fBlocal_filter_before_emp\fR"
+
+.IX Item "\fBlocal_filter_after_emp\fR"
+
+.IX Item "\fBlocal_filter_middle\fR"
+
+.IX Item "\fBlocal_filter_scoring\fR"
+
+.IX Item "\fBlocal_filter_last\fR"
+
+.IX Item "\fBlocal_filter_cancel\fR"
+
+.IX Item "\fBlocal_filter_newrmgroup\fR"
+
+.IX Subsection "\s-1RETURN\s0 \s-1VALUES\s0"
+
+.IX Subsection "\s-1WHAT\s0 \s-1YOU\s0 \s-1GET\s0"
+
+.IX Item "\fB%hdr\fR"
+
+.IX Item "\fB%lch\fR"
+
+.IX Item "\fB@groups\fR"
+
+.IX Item "\fB@followups\fR"
+
+.IX Item "\fB$lines\fR"
+
+.IX Item "\fB%gr\fR"
+
+.IX Item "\fB%config\fR"
+
+.IX Subsection "\s-1DEBUGGING\s0"
+
+.IX Header "SIGNALS"
+
+.IX Header "CREDITS"
+
+.IX Header "COPYRIGHT"
+
+.IX Header "LICENSE"
+
+.IX Header "AVAILABILITY"
+
