@@ -16,3 +16,14 @@ diff -Nur cleanfeed-0.95.7b/cleanfeed cleanfeed-0.95.7b.orig/cleanfeed
  
  
  # Everything below here can be set in cleanfeed.conf
+--- ./cleanfeed.org	2008-08-12 09:49:59.932847792 +0000
++++ ./cleanfeed	2008-08-12 09:50:48.423467334 +0000
+@@ -15,7 +15,7 @@
+ # Directory where cleanfeed.local and the other configuration files live.
+ # Set this to undef to not use any external file.
+ 
+-$config_dir = '/usr/local/news/cleanfeed/etc';
++$config_dir = '/etc/news';
+ 
+ ##############################################################################
+ # Server configuration
