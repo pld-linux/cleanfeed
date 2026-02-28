@@ -2,7 +2,7 @@ Summary:	INN spam filter
 Summary(pl.UTF-8):	Filtr spamu dla INN-a
 Name:		cleanfeed
 Version:	20100602
-Release:	1
+Release:	2
 License:	Artistic v2.0
 Group:		Networking/Daemons
 #originally:	http://www.bofh.it/~md/cleanfeed/%{name}-%{src_ver}.tgz
